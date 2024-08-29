@@ -1,25 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import './index.css';
+import { Route,createBrowserRouter,createRoutesFromElements,RouterProvider } from 'react-router-dom'
+import MainLayout from './layouts/Mainlayout';
+import InfluRegister from './components/InfluRegister';
+import SponsoRegister from './components/SponsoRegister';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+const router=createBrowserRouter(createRoutesFromElements
+  (
+    <Route path='/' element={<MainLayout/>}>
+          <Route path="/signup" element={<InfluRegister/>}/>
+          <Route path="/sponsosignup" element={<SponsoRegister/>}/>
+    </Route>
+
+  )
+)
+
+
+const App=()=>{
+  return <RouterProvider router={router}/>
 }
 
 export default App;
