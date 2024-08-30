@@ -1,10 +1,11 @@
 import React,{useState,useEffect} from 'react';
 import background from '../assets/b2.avif';
 import '../index.css';
+import { useNavigate } from "react-router-dom";
 
 const InfluRegister = () => {
 
-
+  const navigate=useNavigate();
   const [formData,setFormData]=useState({
     'username':'',
     'niche':'',
@@ -44,6 +45,8 @@ const InfluRegister = () => {
        const user_id=data._id;
        localStorage.setItem("user_id",user_id);
        console.log("User Id:",user_id);
+
+       navigate('/influLogin');
     }
 
     catch(error)
@@ -85,7 +88,7 @@ const InfluRegister = () => {
             <br/>
             <button className="bg-blue-500 rounded-xl p-2 mt-2 text-white" type="submit">Register</button>
             <br/>
-            <a href="/" className="underline">Already Registered? Click to Login</a>
+            <a href="/influlogin" className="underline">Already Registered? Click to Login</a>
             <br/>
             <a href="/sponsosignup" className='bg-yellow-400 rounded-lg p-3'>Click to Sponsor Registration</a>
           </form>
