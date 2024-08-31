@@ -42,9 +42,9 @@ const InfluLogin = () => {
             const data=await response.json();
             if(data["success"]===true)
             {
-                const user_id=data["userId"];
-                localStorage.setItem("user_id",user_id);
-                console.log("User Id:",user_id);
+                const influencerId=data["influencerId"];
+                localStorage.setItem("influencerId",influencerId);
+                console.log("User Id:",influencerId);
                 console.log("Login successful!")
                 navigate('/');
             }

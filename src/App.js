@@ -11,7 +11,8 @@ import HomePage from './components/HomePage';
 
 const router=createBrowserRouter(createRoutesFromElements
   (
-    <Route path='/' element={<MainLayout/>}>
+    // <Route path='/' element={<MainLayout/>}>
+    <Route>
           <Route path="/" element={<HomePage/>}/>
           <Route path="/signup" element={<InfluRegister/>}/>
           <Route path="/sponsosignup" element={<SponsoRegister/>}/>

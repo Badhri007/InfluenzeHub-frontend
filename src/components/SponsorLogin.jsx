@@ -42,9 +42,9 @@ const SponsorLogin = () => {
             const data=await response.json();
             if(data["success"]===true)
             {
-                const user_id=data["userId"];
-                localStorage.setItem("user_id",user_id);
-                console.log("User Id:",user_id);
+                const sponsorId=data["sponsorId"];
+                localStorage.setItem("sponsorId",sponsorId);
+                console.log("User Id:",sponsorId);
                 console.log("Login successful!")
                 navigate('/');
             }
