@@ -1,9 +1,9 @@
 import React from 'react'
 import Navbar from './Navbar';
-import SponsoHomePage from './SponsoHomePage';
-import InfluHomePage from './InfluHomePage';
-import InfluNavbar from './InfluNavbar';
-import SponsoNavbar from './SponsoNavbar';
+import SponsoHomePage from './sponsor/SponsoHomePage';
+import InfluHomePage from './influencer/InfluHomePage';
+import InfluNavbar from './influencer/InfluNavbar';
+import SponsoNavbar from './sponsor/SponsoNavbar';
 
 const HomePage = () => {
 

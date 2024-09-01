@@ -41,7 +41,7 @@ const Navbar = () => {
             <li><a href="/" className="text-white block px-2 py-1">Home</a></li>
             <li><a href="#" className="text-white block px-2 py-1">About</a></li>
             <li><a href="/signup" className="text-white block px-2 py-1">Register</a></li>
-            <li><a href="/influlogin" className="text-white block px-2 py-1">Login</a></li>
+            <li><a href="/influencerLogin" className="text-white block px-2 py-1">Login</a></li>
           </ul>
         </div>
       </div>
