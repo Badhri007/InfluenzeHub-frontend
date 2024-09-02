@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SponsoNavbar from './SponsoNavbar';
 import addIcon from '../../assets/addIcon.png';
+import loadingIcon from '../../assets/loadingIcon.png';
 
 
 const SponsorCampaign = () => {
@@ -8,19 +9,23 @@ const SponsorCampaign = () => {
     title: '',
     description: '',
     niche: '',
-    date: '',
-    campaignFile: null, 
+    budget:'',
+    visibility:'',
+    startDate: '',
+    endDate:'',
+    campaignFile: null,
   });
 
   const [imageUrl, setImageUrl] = useState('');
   const [displayCampaignForm, setDisplayCampaignForm] = useState(false);
+  const [isSubmitting,setIsSubmitting]=useState(false);
 
   const handleChanges = (e) => {
     const { name, value, files } = e.target;
     if (name === 'campaignFile') {
       setCampaignData((prevData) => ({
         ...prevData,
-        campaignFile: files[0], 
+        campaignFile: files[0],
       }));
     } else {
       setCampaignData((prevData) => ({
@@ -30,30 +35,30 @@ const SponsorCampaign = () => {
     }
   };
 
-  
+
 
   const handleImageUpload = async () => {
     if (!campaignData.campaignFile) {
       console.error('No file selected');
       return null;
     }
-  
+
     const timestamp = Math.floor(Date.now() / 1000);
-  
+
     const formData = new FormData();
     formData.append('file', campaignData.campaignFile);
     formData.append('timestamp', timestamp);
-    formData.append('upload_preset', 'influencer-upload'); 
-    formData.append('api_key', '153934842354119'); 
-  
+    formData.append('upload_preset', 'influencer-upload');
+    formData.append('api_key', '153934842354119');
+
     try {
       const response = await fetch('https://api.cloudinary.com/v1_1/dg3brbocw/image/upload', {
         method: 'POST',
         body: formData,
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         setImageUrl(data.secure_url); // Save the uploaded image URL
         return data.secure_url;
@@ -66,12 +71,15 @@ const SponsorCampaign = () => {
       return null;
     }
   };
-  
-  
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setDisplayCampaignForm(false);
+
+    
+
+    setIsSubmitting(true);
 
     const uploadedImageUrl = await handleImageUpload();
 
@@ -82,7 +90,26 @@ const SponsorCampaign = () => {
       };
 
       console.log(formData);
-      // Here you can send the form data to your backend server using fetch if needed
+
+      try {
+        const url = "http://localhost:5000/storeCampaign";
+        const response=await fetch(url,{
+          method: "POST",
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+      setIsSubmitting(false);
+      setDisplayCampaignForm(false);
+      console.log("Data response got:",data);
+
+      }
+      catch (err) {
+        console.log("Error storing campaign Data:", err);
+      }
     }
   };
 
@@ -118,7 +145,7 @@ const SponsorCampaign = () => {
           </div>
           <div className="mb-5">
             <label className="block mb-2 mx-2 text-sm font-medium text-gray-900">
-              Description
+              Description/Requirements
             </label>
             <textarea
               name="description"
@@ -147,14 +174,42 @@ const SponsorCampaign = () => {
               <option value="Mutual Funds">Mutual Funds</option>
             </select>
           </div>
+
+
+          <div className='mb-5'>
+            <label className="block mb-2 mx-2 text-sm font-medium text-gray-900">Budget</label>
+            <input type="number" name="budget" value={campaignData.budget} onChange={handleChanges}
+              className="bg-gray-50 mx-2 w-[90%] md:w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+              required></input>
+          </div>
+
+          <div className='mb-5'>
+          <label className="block mb-2 mx-2 text-sm font-medium text-gray-900">Visibility</label>
+            <input type="radio" name="visibility" id="visible" value="public" onChange={handleChanges} className="mx-3 w-10 h-5 align-middle"/>Public
+            <input type="radio" name="visibility" id="visible" value="private" onChange={handleChanges} className="mx-3 w-10 h-5 align-middle"/>Private<br/>
+          </div>
+
           <div className="mb-5">
             <label className="block mb-2 mx-2 text-sm font-medium text-gray-900">
-              Date
+              Start Date
             </label>
             <input
               type="date"
-              name="date"
-              value={campaignData.date}
+              name="startDate"
+              value={campaignData.startDate}
+              onChange={handleChanges}
+              className="bg-gray-50 mx-2 w-[90%] md:w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+              required
+            />
+          </div>
+          <div className="mb-5">
+            <label className="block mb-2 mx-2 text-sm font-medium text-gray-900">
+              End Date
+            </label>
+            <input
+              type="date"
+              name="endDate"
+              value={campaignData.endDate}
               onChange={handleChanges}
               className="bg-gray-50 mx-2 w-[90%] md:w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
               required
@@ -180,6 +235,12 @@ const SponsorCampaign = () => {
             Submit
           </button>
         </form>
+      )}
+
+{isSubmitting && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <img src={loadingIcon} className="w-10 h-10 animate-spin" alt="Loading" />
+        </div>
       )}
     </div>
   );
