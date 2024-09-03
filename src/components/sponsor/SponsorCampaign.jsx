@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import SponsoNavbar from './SponsoNavbar';
 import addIcon from '../../assets/addIcon.png';
 import loadingIcon from '../../assets/loadingIcon.png';
+import ListCampaigns from './listCampaigns';
 
 
 const SponsorCampaign = () => {
   const [campaignData, setCampaignData] = useState({
     title: '',
+    sponsorId:'',
     description: '',
     niche: '',
     budget:'',
@@ -15,6 +17,7 @@ const SponsorCampaign = () => {
     endDate:'',
     campaignFile: null,
   });
+
 
   const [imageUrl, setImageUrl] = useState('');
   const [displayCampaignForm, setDisplayCampaignForm] = useState(false);
@@ -25,11 +28,13 @@ const SponsorCampaign = () => {
     if (name === 'campaignFile') {
       setCampaignData((prevData) => ({
         ...prevData,
+        sponsorId:localStorage.getItem("sponsorId"),
         campaignFile: files[0],
       }));
     } else {
       setCampaignData((prevData) => ({
         ...prevData,
+        sponsorId:localStorage.getItem("sponsorId"),
         [name]: value,
       }));
     }
@@ -104,6 +109,7 @@ const SponsorCampaign = () => {
       const data = await response.json();
       setIsSubmitting(false);
       setDisplayCampaignForm(false);
+      fetchCampaigns();
       console.log("Data response got:",data);
 
       }
@@ -113,18 +119,59 @@ const SponsorCampaign = () => {
     }
   };
 
+  const [campaigns,setCampaigns]=useState([]);
+
+
+
+const fetchCampaigns = async () => {
+    try {
+        const sponsor_Id = localStorage.getItem("sponsorId");
+        console.log("In frontend: ", sponsor_Id);
+        if (!sponsor_Id) {
+            console.error('User ID not found in localStorage');
+            return;
+        }
+
+        const url = `http://localhost:5000/getAllCampaigns`;
+
+        const response = await fetch(url, {
+            headers: {
+                'Content-Type': 'application/json',
+                'sponsorid': sponsor_Id
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            setCampaigns(data);
+            console.log("Data from backend:",data);
+
+        } else {
+            console.error('Error fetching expenses:', response.status, response.statusText);
+        }
+    } catch (error) {
+        console.error('Error fetching expenses:', error);
+    }
+};
+useEffect(() => {
+    fetchCampaigns();
+},[]);
+
+
   return (
     <div>
       <SponsoNavbar />
       <br />
-      <div className="flex flex-col justify-center items-center">
-        SponsorCampaign
+      <ListCampaigns data={campaigns}/>
+      <div className="flex flex-col justify-center items-center bg-black">
+       
         <img
           src={addIcon}
           onClick={() => setDisplayCampaignForm(true)}
           className="w-20 h-20"
           alt="Add Campaign"
         />
+         Add Campaign
       </div>
       <br />
       {displayCampaignForm && (
