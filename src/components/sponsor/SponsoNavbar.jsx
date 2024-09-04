@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import {useNavigate} from 'react-router-dom';
 
-const Navbar = () => {
+const SponsoNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const navigate=useNavigate();
@@ -60,4 +60,4 @@ const Navbar = () => {
 }
 
 
-export default Navbar
+export default SponsoNavbar
