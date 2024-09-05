@@ -1,14 +1,63 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import { useLocation } from 'react-router-dom';
 import SponsoNavbar from './SponsoNavbar';
+import AdRequestFormModal from './AdRequestFormModal';
 
-const AdRequests = () => {
+const SingleCampaign = () => {
   const location = useLocation();
   const currentCampaign = location.state?.currentCampaign;
+
+  const[open,setOpen]=useState(false);
+
+  const[campaignId,setCampaignId]=useState('');
+
+  useEffect(() => {
+    if (currentCampaign && currentCampaign.length > 0) {
+      setCampaignId(currentCampaign[0]._id);
+    }
+  }, [currentCampaign]);
+
+  const [influencers,setInfluencers]=useState([]);
 
   if (!currentCampaign) {
     return <div>No campaign data available</div>;
   }
+
+
+  const handleSubmit=async(e)=>{
+
+    e.preventDefault();
+    setOpen(true);
+
+    const url="http://localhost:5000/getAllInfluencers"
+
+    try{
+      const response= await fetch(url,{
+          headers:{
+              'Content-Type': 'application/json',
+          }
+      })
+      if (response.ok) {
+          const data = await response.json();
+          setInfluencers(data);
+          console.log("Data from backend:", data);
+  
+        } else {
+          console.error('Error fetching campaigns:', response.status, response.statusText);
+        }
+  
+      }
+  
+      catch (err) {
+        console.log("Error in getting particular campaign:", err);
+      }
+  }
+
+  
+  
+
+
+  
 
   return (
     <div className='bg-white'>
@@ -42,8 +91,15 @@ const AdRequests = () => {
             <p className='text-black text-lg ml-1'>{currentCampaign[0].endDate.slice(0,10).split("-").reverse().join("/")}</p>
         </div>
     </div>
+
+    <div className='flex justify-center'>
+      <button className=' bg-amber-300 rounded-xl p-2 hover:scale-110 transition-all duration-200 text-black shadow-lg' onClick={handleSubmit}>Request Influencers</button>
+    </div>
+
+    <AdRequestFormModal open={open} onClose={()=>{setOpen(false)}}  influencers={influencers}  campaignId={campaignId}/>
+
     </div>
   );
 }
 
-export default AdRequests;
+export default SingleCampaign;

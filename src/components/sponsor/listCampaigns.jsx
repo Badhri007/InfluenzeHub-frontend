@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import AdRequests from './AdRequests';
+import AdRequests from './SingleCampaign';
 import { useNavigate } from 'react-router-dom';
 
 
