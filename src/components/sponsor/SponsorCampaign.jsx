@@ -159,11 +159,11 @@ useEffect(() => {
 
 
   return (
-    <div>
+    <div className='bg-gray-100'>
       <SponsoNavbar />
       <br />
       <ListCampaigns data={campaigns}/>
-      <div className="flex flex-col justify-center items-center bg-black">
+      <div className="flex flex-col justify-center items-center bg-gray-100">
        
         <img
           src={addIcon}

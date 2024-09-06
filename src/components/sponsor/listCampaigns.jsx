@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import AdRequests from './SingleCampaign';
 import { useNavigate } from 'react-router-dom';
+import SearchBar from './SearchBar';
 
 
 
@@ -41,11 +42,14 @@ const ListCampaigns = ({ data = [] }) => {
 
 
   return (
-    <div className='bg-black'>
-      ListCampaigns
+    <div className='bg-gray-100'>
+      <p className='text-center text-xl font-semibold'>My Campaigns</p>
+      <br/>
+      <SearchBar/>
+      <br/>
       <div className='grid grid-cols-1  md:grid-cols-3 lg:grid-cols-4   gap-3'>
         {data.map((campaign, index) =>
-          <div className='bg-white rounded-md p-4 flex flex-col'>
+          <div className='bg-white shadow-xl rounded-xl p-4 flex flex-col'>
             <div className='flex flex-row'>
               <div className='flex flex-col'>
                 <p className='font-roboto font-semibold text-xl' key={index}>{campaign.name}</p>
