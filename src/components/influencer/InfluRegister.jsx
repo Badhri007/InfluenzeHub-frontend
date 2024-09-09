@@ -42,7 +42,7 @@ const InfluRegister = () => {
       );
 
       const data = await response.json();
-      navigate('/influLogin');
+      navigate('/influencerLogin');
     }
 
     catch (error) {
@@ -85,7 +85,7 @@ const InfluRegister = () => {
               <br />
               <button className="bg-blue-500 rounded-xl p-2 mt-2 text-white" type="submit">Register</button>
               <br />
-              <a href="/influlogin" className="underline">Already Registered? Click to Login</a>
+              <a href="/influencerLogin" className="underline">Already Registered? Click to Login</a>
               <br />
               <a href="/sponsosignup" className='bg-yellow-400 rounded-lg p-3'>Click to Sponsor Registration</a>
             </form>
