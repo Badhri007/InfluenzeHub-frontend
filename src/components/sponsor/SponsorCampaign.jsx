@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SponsoNavbar from './SponsoNavbar';
-import addIcon from '../../assets/addIcon.png';
+import addIcon from '../../assets/plus.png';
 
 import loadingIcon from '../../assets/loadingIcon.png';
 import ListCampaigns from './listCampaigns';
@@ -8,7 +8,7 @@ import ListCampaigns from './listCampaigns';
 const SponsorCampaign = () => {
 
   const [campaignData, setCampaignData] = useState({
-    title: '',
+    name: '',
     sponsorId: '',
     description: '',
     niche: '',
@@ -17,6 +17,7 @@ const SponsorCampaign = () => {
     startDate: '',
     endDate: '',
     campaignFile: null,
+    _id:''
   });
 
   const [allCampaigns, setAllCampaigns] = useState([]);
@@ -119,39 +120,42 @@ const SponsorCampaign = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
+  
     const uploadedImageUrl = await handleImageUpload();
-
+  
     if (uploadedImageUrl) {
       const formData = {
         ...campaignData,
         imageUrl: uploadedImageUrl,
+        _id: campaignData._id // Ensure _id is included for updates
       };
-
+  
       console.log(formData);
-
+  
       try {
-        const url = "http://localhost:5000/storeCampaign";
+        const method = campaignData._id ? "PUT" : "POST"; // Choose method based on _id existence
+        const url = method === "PUT" ? `http://localhost:5000/updateCampaign` : "http://localhost:5000/storeCampaign";
+  
         const response = await fetch(url, {
-          method: "POST",
+          method: method,
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(formData)
         });
-
+  
         const data = await response.json();
         setIsSubmitting(false);
         setDisplayCampaignForm(false);
         fetchCampaigns();
         console.log("Data response got:", data);
-
+  
       } catch (err) {
         console.log("Error storing campaign Data:", err);
       }
     }
   };
-
+  
 
 
 
@@ -171,15 +175,32 @@ const SponsorCampaign = () => {
   return (
     <div>
       <SponsoNavbar/>
-      <ListCampaigns campaigns={filteredCampaigns} onFilterChange={handleFilterChange} />
+      <ListCampaigns 
+      campaigns={filteredCampaigns} 
+      onFilterChange={handleFilterChange} 
+      setCampaignData={(campaign) => {
+        setCampaignData({ 
+          ...campaign, 
+          sponsorId: localStorage.getItem("sponsorId"), 
+          _id: campaign._id // Ensure the _id is included 
+        });
+        setDisplayCampaignForm(true); // Set the form to display
+  }} 
+
+  setDisplayCampaignForm={setDisplayCampaignForm}
+/>
+
+
+
+
       <div className="flex flex-col justify-center items-center bg-gray-100">
         <img
           src={addIcon}
           onClick={() => setDisplayCampaignForm(true)}
-          className="w-20 h-20 cursor-pointer"
+          className="w-16 h-16 cursor-pointer"
           alt="Add Campaign"
         />
-        Add Campaign
+       
       </div>
       <br />
 
@@ -192,15 +213,22 @@ const SponsorCampaign = () => {
           <div className="fixed mt-2 inset-0 flex items-center justify-center z-40">
             <div className="bg-white rounded-lg p-6 shadow-lg relative max-h-[90vh] w-full max-w-md overflow-y-auto">
               <form className="max-w-sm mx-auto" onSubmit={handleSubmit}>
-                <p className="text-xl text-center rounded-lg bg-green-300 w-1/2 m-auto font-semibold">ADD CAMPAIGN</p>
+              {campaignData._id ? (
+                <p className="text-xl text-center rounded-lg bg-green-300 w-1/2 m-auto font-semibold">
+                  EDIT CAMPAIGN
+                </p>
+              ) : (
+                <p className="text-xl text-center rounded-lg bg-green-300 w-1/2 m-auto font-semibold">
+                  ADD CAMPAIGN
+                </p>
+              )}
                 <div className="mb-5">
                   <label className="block mb-2 text-sm font-medium text-gray-900">
-                    Title
-                  </label>
+                   Title</label>
                   <input
                     type="text"
-                    name="title"
-                    value={campaignData.title}
+                    name="name"
+                    value={campaignData.name}
                     onChange={handleChanges}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                     placeholder="Samsung s23 Ultra"
@@ -250,8 +278,8 @@ const SponsorCampaign = () => {
 
           <div className='mb-5'>
             <label className="block mb-2 mx-2 text-sm font-medium text-gray-900">Visibility</label>
-            <input type="radio" name="visibility" id="visible" value="public" onChange={handleChanges} className="mx-3 w-10 h-5 align-middle" />Public
-            <input type="radio" name="visibility" id="visible" value="private" onChange={handleChanges} className="mx-3 w-10 h-5 align-middle" />Private<br />
+            <input type="radio" name="visibility" id="visible" value="public" onChange={handleChanges} className="mx-3 w-10 h-5 align-middle" checked={campaignData.visibility === "public"}/>Public
+            <input type="radio" name="visibility" id="visible" value="private" onChange={handleChanges} className="mx-3 w-10 h-5 align-middle" checked={campaignData.visibility === "private"} />Private<br />
           </div>
 
           <div className="mb-5">
@@ -261,7 +289,7 @@ const SponsorCampaign = () => {
             <input
               type="date"
               name="startDate"
-              value={campaignData.startDate}
+              value={campaignData.startDate ? campaignData.startDate.slice(0, 10) : ''}
               onChange={handleChanges}
               className="bg-gray-50 mx-2 w-[90%] md:w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
               required
@@ -274,7 +302,7 @@ const SponsorCampaign = () => {
             <input
               type="date"
               name="endDate"
-              value={campaignData.endDate}
+              value={campaignData.endDate ? campaignData.endDate.slice(0, 10) : ''}
               onChange={handleChanges}
               className="bg-gray-50 mx-2 w-[90%] md:w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
               required
