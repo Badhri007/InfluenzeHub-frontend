@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SearchBar from './SearchBar';
 import editIcon from '../../assets/edit2.png';
+import plusIcon from '../../assets/gplus2.svg';
+// import plusIcon from '../../assets/whiteplus.svg';
 import deleteIcon from '../../assets/delete.png';
 
-const ListCampaigns = ({ campaigns = [], onFilterChange, setCampaignData, setDisplayCampaignForm }) => {
+
+const ListCampaigns = ({ campaigns = [], onFilterChange, fetchCampaigns,setCampaignData, setDisplayCampaignForm }) => {
   const navigate = useNavigate();
 
   // Function to view a specific campaign
@@ -40,15 +43,63 @@ const ListCampaigns = ({ campaigns = [], onFilterChange, setCampaignData, setDis
     setDisplayCampaignForm(true);
   };
 
+  const handleAddCampaign = () => {
+    // Reset the campaign form fields
+    setCampaignData({
+      _id: '',
+      name: '',
+      sponsorId: '',
+      description: '',
+      niche: '',
+      budget: '',
+      visibility: '',
+      startDate: '',
+      endDate: '',
+      campaignFile: null,
+      imageUrl: '',
+    });
+    setDisplayCampaignForm(true); // Open the campaign form
+  };
+
+
+  const handleDeleteCampaign=async(campaign_id)=>{
+    console.log("Delete campaign Id:",campaign_id);
+
+    try
+    {
+      const url="http://localhost:5000/deleteCampaign"
+      const response=await fetch(url,{
+        method:"DELETE",
+        headers:{
+          "Content-Type":"Application/JSON",
+          "campaign_id":campaign_id
+        }
+      });
+
+      const data=await response.json();
+      fetchCampaigns();
+      console.log("Data after deleting:",data);
+    }
+
+    catch(err)
+    {
+      console.log("Error in deleting Campaign:",err);
+    }
+
+  }
+
   return (
-    <div className='bg-gray-100 p-2'>
+    <div className='bg-gray-100 p-2 h-full'>
       <p className='text-center text-xl font-semibold'>My Campaigns</p>
       <br />
       <SearchBar onFilterChange={onFilterChange} />
       <br />
-      <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3'>
+      <div className='grid grid-cols-1 w-[90%] m-auto md:grid-cols-3 lg:grid-cols-4 gap-4'>
+      <div className='bg-white shadow-xl rounded-xl p-4 flex flex-col m-1 hover:scale-110 transition-all duration-300' onClick={handleAddCampaign}>
+        <img src={plusIcon} className='w-[50%] h-[50%] m-auto' ></img>
+      </div>
         {campaigns.map((campaign, index) => (
-          <div key={campaign._id} className='bg-white shadow-xl rounded-xl p-4 flex flex-col'>
+          <div key={campaign._id} className='bg-white shadow-xl rounded-xl p-4 m-1 flex flex-col hover:scale-110 transition-all duration-300'>
             <div className='flex flex-row'>
               <div className='flex flex-col'>
                 <p className='font-roboto font-semibold text-xl'>{campaign.name}</p>
@@ -78,13 +129,14 @@ const ListCampaigns = ({ campaigns = [], onFilterChange, setCampaignData, setDis
                 <p className='text-md font-medium'>{campaign.budget}</p>
               </div>
               <div className='flex flex-row justify-between items-center'>
-                <img src={deleteIcon} alt="Delete Campaign" className='w-10 h-10 cursor-pointer' />
+                <img src={deleteIcon} alt="Delete Campaign" className='w-9 h-9 cursor-pointer' onClick={()=>{handleDeleteCampaign(campaign._id)}} />
                 <img
                   src={editIcon}
                   alt="Edit Campaign"
-                  className='w-12 h-12 cursor-pointer'
+                  className='w-10 h-10 cursor-pointer align-middle'
                   onClick={() => handleEdit(campaign._id)}
                 />
+
               </div>
               <button
                 className='p-2 border border-blue-500 hover:bg-blue-700 cursor-pointer hover:text-white text-blue-500 rounded-lg w-[50%] ml-auto'

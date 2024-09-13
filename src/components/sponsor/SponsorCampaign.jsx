@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SponsoNavbar from './SponsoNavbar';
 import addIcon from '../../assets/plus.png';
-
+import closeIcon from '../../assets/cancel.png';
 import loadingIcon from '../../assets/loadingIcon.png';
 import ListCampaigns from './listCampaigns';
 
@@ -17,7 +17,8 @@ const SponsorCampaign = () => {
     startDate: '',
     endDate: '',
     campaignFile: null,
-    _id:''
+    _id:'',
+    imageUrl: '' 
   });
 
   const [allCampaigns, setAllCampaigns] = useState([]);
@@ -84,8 +85,8 @@ const SponsorCampaign = () => {
 
   const handleImageUpload = async () => {
     if (!campaignData.campaignFile) {
-      console.error('No file selected');
-      return null;
+      // No new file selected, return existing imageUrl
+      return campaignData.imageUrl || null;
     }
 
     const timestamp = Math.floor(Date.now() / 1000);
@@ -126,7 +127,7 @@ const SponsorCampaign = () => {
     if (uploadedImageUrl) {
       const formData = {
         ...campaignData,
-        imageUrl: uploadedImageUrl,
+        imageUrl: uploadedImageUrl || campaignData.imageUrl,
         _id: campaignData._id // Ensure _id is included for updates
       };
   
@@ -173,16 +174,18 @@ const SponsorCampaign = () => {
   };
 
   return (
-    <div>
+    <div className='h-full bg-gray-100'>
       <SponsoNavbar/>
       <ListCampaigns 
       campaigns={filteredCampaigns} 
       onFilterChange={handleFilterChange} 
+      fetchCampaigns={fetchCampaigns}
       setCampaignData={(campaign) => {
         setCampaignData({ 
           ...campaign, 
           sponsorId: localStorage.getItem("sponsorId"), 
-          _id: campaign._id // Ensure the _id is included 
+          _id: campaign._id ,
+          imageUrl: campaign.imageUrl// Ensure the _id is included 
         });
         setDisplayCampaignForm(true); // Set the form to display
   }} 
@@ -191,18 +194,8 @@ const SponsorCampaign = () => {
 />
 
 
-
-
-      <div className="flex flex-col justify-center items-center bg-gray-100">
-        <img
-          src={addIcon}
-          onClick={() => setDisplayCampaignForm(true)}
-          className="w-16 h-16 cursor-pointer"
-          alt="Add Campaign"
-        />
-       
-      </div>
       <br />
+      <br/>
 
       {displayCampaignForm && (
         <>
@@ -213,6 +206,7 @@ const SponsorCampaign = () => {
           <div className="fixed mt-2 inset-0 flex items-center justify-center z-40">
             <div className="bg-white rounded-lg p-6 shadow-lg relative max-h-[90vh] w-full max-w-md overflow-y-auto">
               <form className="max-w-sm mx-auto" onSubmit={handleSubmit}>
+              <div className='flex flex-row'>
               {campaignData._id ? (
                 <p className="text-xl text-center rounded-lg bg-green-300 w-1/2 m-auto font-semibold">
                   EDIT CAMPAIGN
@@ -220,8 +214,12 @@ const SponsorCampaign = () => {
               ) : (
                 <p className="text-xl text-center rounded-lg bg-green-300 w-1/2 m-auto font-semibold">
                   ADD CAMPAIGN
+                  
                 </p>
               )}
+              <img src={closeIcon} className='h-10 w-10 cursor-pointer' onClick={()=>{setDisplayCampaignForm(false)}}/>
+              </div>
+              
                 <div className="mb-5">
                   <label className="block mb-2 text-sm font-medium text-gray-900">
                    Title</label>
@@ -263,8 +261,11 @@ const SponsorCampaign = () => {
               <option value="Clothing">Clothing</option>
               <option value="Accessories">Accessories</option>
               <option value="Food">Food</option>
-              <option value="Nestle-Food">Nestle-Food</option>
+              <option value="Entertainment">Entertainment</option>
               <option value="Mutual Funds">Mutual Funds</option>
+              <option value="Medicine">Medicine</option>
+              <option value="Beverages">Beverages</option>
+              <option value="Other">Other</option>
             </select>
           </div>
 
@@ -317,7 +318,7 @@ const SponsorCampaign = () => {
               type="file"
               onChange={handleChanges}
               className="mx-2"
-              required
+              required={!campaignData._id}
             />
           </div>
 
