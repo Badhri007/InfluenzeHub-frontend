@@ -3,6 +3,9 @@ import { useLocation } from 'react-router-dom';
 import SponsoNavbar from './SponsoNavbar';
 import AdRequestFormModal from './AdRequestFormModal';
 import inboxIcon from '../../assets/inbox.png'
+import { useNavigate } from 'react-router-dom';
+
+
 
 const SingleCampaign = () => {
   const location = useLocation();
@@ -11,6 +14,8 @@ const SingleCampaign = () => {
   const[open,setOpen]=useState(false);
 
   const[campaignId,setCampaignId]=useState('');
+
+  const navigate=useNavigate();
 
   useEffect(() => {
     if (currentCampaign && currentCampaign.length > 0) {
@@ -55,6 +60,7 @@ const SingleCampaign = () => {
   }
 
   
+  
   const handleAdRequests=async(e)=>{
     e.preventDefault();
     let campaign_id=campaignId;
@@ -73,6 +79,7 @@ const SingleCampaign = () => {
 
         const data=await response.json();
         console.log("Ad Requests got:",data);
+        navigate('/AllAdRequests',{ state: { allAdRequests: data , CampaignName:currentCampaign[0].name} })
     }
     catch(err)
     {
@@ -129,7 +136,7 @@ const SingleCampaign = () => {
       <button className=' bg-amber-300 rounded-xl p-2 hover:scale-110 transition-all duration-200 text-black shadow-lg' onClick={handleSubmit}>Request Influencers</button>
     </div>
 
-    <AdRequestFormModal open={open} onClose={()=>{setOpen(false)}}  influencers={influencers}  campaignId={campaignId}/>
+    <AdRequestFormModal open={open} onClose={()=>{setOpen(false)}} setOpen={setOpen} influencers={influencers}  campaignId={campaignId}/>
 
     </div>
   );

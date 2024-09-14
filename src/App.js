@@ -9,6 +9,7 @@ import SponsorLogin from './components/sponsor/SponsorLogin';
 import HomePage from './components/HomePage';
 import SponsorCampaign from './components/sponsor/SponsorCampaign';
 import SingleCampaign from './components/sponsor/SingleCampaign';
+import AllRequests from './components/sponsor/AllRequests';
 
 
 const router = createBrowserRouter(createRoutesFromElements
@@ -22,6 +23,7 @@ const router = createBrowserRouter(createRoutesFromElements
       <Route path="/sponsorLogin" element={<SponsorLogin />} />
       <Route path="/sponsorCampaign" element={<SponsorCampaign/>}/>
       <Route path="/campaign/:id" element={<SingleCampaign />} />
+      <Route path='/AllAdRequests' element={<AllRequests/>}/>
     </Route>
 
   )

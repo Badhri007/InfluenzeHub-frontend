@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const AdRequestFormModal = ({ open, onClose, influencers, campaignId }) => {
+const AdRequestFormModal = ({ open, onClose, influencers,setOpen, campaignId }) => {
   const [formData, setFormData] = useState({
     adname: '',
     requirements: '',
@@ -40,6 +40,8 @@ const AdRequestFormModal = ({ open, onClose, influencers, campaignId }) => {
 
       const data = await response.json();
       console.log('Saved Ad Request:', data);
+      setOpen(false);
+
     } catch (err) {
       console.log('Error in storing ad request:', err);
     }
