@@ -2,6 +2,7 @@ import React,{useState,useEffect} from 'react';
 import { useLocation } from 'react-router-dom';
 import SponsoNavbar from './SponsoNavbar';
 import AdRequestFormModal from './AdRequestFormModal';
+import inboxIcon from '../../assets/inbox.png'
 
 const SingleCampaign = () => {
   const location = useLocation();
@@ -54,7 +55,30 @@ const SingleCampaign = () => {
   }
 
   
-  
+  const handleAdRequests=async(e)=>{
+    e.preventDefault();
+    let campaign_id=campaignId;
+    console.log("Campaign id:",campaign_id);
+
+    const url="http://localhost:5000/getAllAdRequests"
+    try
+    { 
+        const response=await fetch(url,{
+          method:"GET",
+          headers:{
+            "Content-Type":"Application/JSON",   
+            "campaign_id":campaign_id       
+          }
+        });
+
+        const data=await response.json();
+        console.log("Ad Requests got:",data);
+    }
+    catch(err)
+    {
+      console.log("Error in getting adrequests:", err);
+    }
+  }
 
 
   
@@ -70,7 +94,8 @@ const SingleCampaign = () => {
          style={{ objectFit: 'cover' }} 
     />
   </div>
-        <div className='flex flex-col m-5 items-start'>
+        <div className='flex flex-row m-5 items-start justify-between w-[100%]'>
+          <div>
             <label className='bg-gray-200 rounded-md p-1 font-semibold'>Campaign </label>
             <p className='text-black text-lg ml-1'>{currentCampaign[0].name}</p>
             <br/>
@@ -89,8 +114,16 @@ const SingleCampaign = () => {
             <br/>
             <label className='bg-gray-200 rounded-md p-1 font-semibold'>EndDate </label>
             <p className='text-black text-lg ml-1'>{currentCampaign[0].endDate.slice(0,10).split("-").reverse().join("/")}</p>
+            </div>
+            <div className='flex p-2 gap-2 rounded-xl bg-green-500 flex-row hover:scale-110 hover:border-black  transition-all' onClick={handleAdRequests} >
+            <button className='text-white text-sm md:font-semibold md:text-lg'>My Requests</button>
+            <img src={inboxIcon} className='w-8 h-8 md:w-10 md:h-10'></img>
+            </div>
+
         </div>
     </div>
+
+    
 
     <div className='flex justify-center'>
       <button className=' bg-amber-300 rounded-xl p-2 hover:scale-110 transition-all duration-200 text-black shadow-lg' onClick={handleSubmit}>Request Influencers</button>
