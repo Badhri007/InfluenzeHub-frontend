@@ -47,8 +47,7 @@ const Navbar = () => {
         </div>
         <div className={`lg:flex ${isOpen ? 'block' : 'hidden'} w-full lg:w-auto`}>
           <ul className="flex flex-col lg:flex-row lg:space-x-4 mt-2 lg:mt-0">
-            <li><a href="/" className="text-white block px-2 py-1 cursor-pointer hover:underline">Home</a></li>
-            <li><a href="#" className="text-white block px-2 py- cursor-pointer hover:underline">Profile</a></li>
+            <li><a href="/" className="text-white block px-2 py-1 cursor-pointer hover:underline">Profile</a></li>
             <li><a href="#" className="text-white block px-2 py-1 cursor-pointer hover:underline">Find</a></li>
             <li><a href="#" className="text-white block px-2 py-1 cursor-pointer hover:underline">Stats</a></li>
             <li><button onClick={logout}  className="text-white block px-2 py-1 cursor-pointer hover:underline">Logout</button></li>
