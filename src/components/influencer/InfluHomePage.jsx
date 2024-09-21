@@ -14,12 +14,23 @@ const InfluHomePage = () => {
     profile_photo_url: ''
   });
 
+  const [advertisement,setAdvertisement]=useState({
+    name:'',
+    campaign_id:'',
+    requirements:'',
+    payment_amount:'',
+    status:'',
+    campaignName:''
+  });
+
   const [imageUrl, setImageUrl] = useState('');
   const [file, setFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false); // Track only image upload state
 
   let influencer_id = localStorage.getItem("influencerId");
+
+
 
   useEffect(() => {
     const fetchInfluencer = async () => {
@@ -34,13 +45,35 @@ const InfluHomePage = () => {
           },
         });
         const data = await response.json();
-        setProfile(data); // Set the fetched profile data
+        setProfile(data); // Set the fetchedcon profile data
       } catch (err) {
         console.log(err);
       }
     };
 
+
+    const getAdRequests=async()=>{
+      const url='http://localhost:5000/getAllInfluAdRequests/'
+      try{
+          const response = await fetch(url,{
+            method:"GET",
+            headers:{
+              'Content-Type':'Application/JSON',
+              'influencer_id':influencer_id
+            }
+          })
+          const data = await response.json();
+          setAdvertisement(data);
+          console.log("Ad requests:",data);
+      }
+      catch(err)
+      {
+        console.log("Error in getting all adrequests");
+      }
+    }
+
     fetchInfluencer();
+    getAdRequests();
   }, [influencer_id]);
 
   const handleImageUpload = async () => {
@@ -83,7 +116,6 @@ const InfluHomePage = () => {
     const { name, value } = e.target;
 
     if (name === 'profile-photo') {
-      // Set the selected file for image upload
       setFile(e.target.files[0]);
     } else {
       // Handle other input changes
@@ -142,6 +174,7 @@ const InfluHomePage = () => {
       <div className='flex flex-row h-full bg-gray-200 md:w-[50%] lg:w-[25%]  items-center justify-center sm:ml-0 sm:justify-center md:items-center md:justify-center'>
         <br/>
         <div>
+        <br/>
         <div className='text-center m-auto text-xl font-semibold'>My Profile</div>
         <br/>
         <div className="flex flex-col items-center justify-center">
@@ -226,9 +259,48 @@ const InfluHomePage = () => {
     
     </div>
 
-    <div>
-      <p className='p-5 '>Welcome {profile.username}!</p>
-    </div>
+    <div className='w-[80%]'>
+  <p className="p-5">Welcome {profile.username}!</p>
+  <div className="w-full m-auto shadow-lg rounded-xl overflow-auto">
+  {
+    advertisement.length > 0 ? (
+      <table className='w-full text-sm text-left rtl:text-right text-black-500'>
+        <thead className='bg-gray-100'>
+          <tr>
+            <th scope="col" className="px-6 py-3">AD.NAME</th>
+            <th scope="col" className="px-6 py-3">REQUIREMENTS</th>
+            <th scope="col" className="px-6 py-3">CAMPAIGN</th>
+            <th scope="col" className="px-6 py-3">STATUS</th>
+          </tr>
+        </thead>
+        <tbody>
+        {advertisement.map((ad, index) => (
+          <tr key={index} className="odd:bg-white even:bg-gray-100">
+            <td className="px-6 py-3">{ad.name}</td>
+            <td className="px-6 py-3">{ad.requirements}</td>
+            <td className="px-4 py-3">{ad.campaignName}</td>
+            <td className="px-6 py-3">
+              <button className='p-2 px-3 mr-2 text-white rounded-xl shadow-lg bg-amber-400'>View</button>
+              {ad.status === 'pending' ? (
+                <>
+                  <button className='p-2 mr-2 text-white rounded-xl shadow-lg bg-green-400'>Accept</button>
+                  <button className='p-2 mr-2 text-white rounded-xl shadow-lg bg-red-400'>Reject</button>
+                </>
+              ) : null}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+
+      </table>
+     
+    ) : (
+      <p>No advertisements available</p>
+    )
+  }
+   </div>
+</div>
+
     </div>
   );
 };
