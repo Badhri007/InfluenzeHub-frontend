@@ -20,7 +20,8 @@ const InfluHomePage = () => {
     requirements:'',
     payment_amount:'',
     status:'',
-    campaignName:''
+    campaignName:'',
+    sponsorName:''
   });
 
   const [imageUrl, setImageUrl] = useState('');
@@ -168,10 +169,47 @@ const InfluHomePage = () => {
     }
   };
 
+
+  const handleStatus = async (e) => {
+    const { value } = e.target;
+    console.log("Status:", value);
+  
+    // Update only the status field in the advertisement state
+    setAdvertisement((prevAdvertisement) => ({
+      ...prevAdvertisement,
+      status: value
+    }));
+  
+    try {
+      const url = "http://localhost:5000/updateAd/";
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          'Content-Type': 'Application/JSON',
+          'influencer_id': influencer_id
+        },
+        body: JSON.stringify({
+          ...advertisement, // Include the entire advertisement object with updated status
+          status: value // Update the status based on the selected value
+        })
+      });
+  
+      const data = await response.json();
+      if (response.ok) {
+        setAdvertisement(data); // Update the advertisement state with the new data
+      }
+  
+      console.log("Updated status data:", data);
+  
+    } catch (err) {
+      console.log("Error in updating:", err);
+    }
+  };
+  
+
   return (
     <div className='flex flex-col md:flex-row gap-2'>
-      
-      <div className='flex flex-row h-full bg-gray-200 md:w-[50%] lg:w-[25%]  items-center justify-center sm:ml-0 sm:justify-center md:items-center md:justify-center'>
+       <div className='flex flex-row h-full bg-gray-200 md:w-[50%] lg:w-[25%]  items-center justify-center sm:ml-0 sm:justify-center md:items-center md:justify-center'>
         <br/>
         <div>
         <br/>
@@ -258,49 +296,44 @@ const InfluHomePage = () => {
 
     
     </div>
-
-    <div className='w-[80%]'>
-  <p className="p-5">Welcome {profile.username}!</p>
-  <div className="w-full m-auto shadow-lg rounded-xl overflow-auto">
-  {
-    advertisement.length > 0 ? (
-      <table className='w-full text-sm text-left rtl:text-right text-black-500'>
-        <thead className='bg-gray-100'>
-          <tr>
-            <th scope="col" className="px-6 py-3">AD.NAME</th>
-            <th scope="col" className="px-6 py-3">REQUIREMENTS</th>
-            <th scope="col" className="px-6 py-3">CAMPAIGN</th>
-            <th scope="col" className="px-6 py-3">STATUS</th>
-          </tr>
-        </thead>
-        <tbody>
-        {advertisement.map((ad, index) => (
-          <tr key={index} className="odd:bg-white even:bg-gray-100">
-            <td className="px-6 py-3">{ad.name}</td>
-            <td className="px-6 py-3">{ad.requirements}</td>
-            <td className="px-4 py-3">{ad.campaignName}</td>
-            <td className="px-6 py-3">
-              <button className='p-2 px-3 mr-2 text-white rounded-xl shadow-lg bg-amber-400'>View</button>
-              {ad.status === 'pending' ? (
-                <>
-                  <button className='p-2 mr-2 text-white rounded-xl shadow-lg bg-green-400'>Accept</button>
-                  <button className='p-2 mr-2 text-white rounded-xl shadow-lg bg-red-400'>Reject</button>
-                </>
-              ) : null}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-
-      </table>
-     
-    ) : (
-      <p>No advertisements available</p>
-    )
-  }
-   </div>
-</div>
-
+      
+      <div className='w-[80%]'>
+        <p className="p-5">Welcome {profile.username}!</p>
+        <div className="w-full m-auto shadow-lg rounded-xl overflow-auto">
+          {advertisement.length > 0 ? (
+            <table className='w-full text-sm text-left rtl:text-right text-black-500'>
+              <thead className='bg-gray-100'>
+                <tr>
+                  <th scope="col" className="px-6 py-3">CAMPAIGN</th>
+                  <th scope="col" className="px-6 py-3">SPONSOR</th>
+                  <th scope="col" className="px-6 py-3">STATUS</th>
+                </tr>
+              </thead>
+              <tbody>
+              {advertisement.map((ad, index) => (
+                ad.campaignName && (
+                  <tr key={index} className="odd:bg-white even:bg-gray-100">
+                    <td className="px-4 py-3">{ad.campaignName}</td>
+                    <td className="px-6 py-3">{ad.sponsorName}</td>
+                    <td className="px-6 py-3">
+                      <button className='p-2 px-3 mr-2 text-white rounded-xl shadow-lg bg-amber-400' value="view" onClick={(e) => handleStatus(e, ad.ad_id)}>View</button>
+                      {ad.status === 'pending' && (
+                        <>
+                          <button className='p-2 mr-2 text-white rounded-xl shadow-lg bg-green-400' value="accept" onClick={(e) => handleStatus(e, ad.ad_id)}>Accept</button>
+                          <button className='p-2 mr-2 text-white rounded-xl shadow-lg bg-red-400' value="reject" onClick={(e) => handleStatus(e, ad.ad_id)}>Reject</button>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                )
+              ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No advertisements available</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
