@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import maleIcon from '../../assets/male.jpg';
 import femaleIcon from '../../assets/female.jpg';
 import loadingIcon from '../../assets/loadingIcon.png';
+import RequestViewModal from './RequestViewModal';
 
 const InfluHomePage = () => {
   const [profile, setProfile] = useState({
@@ -27,14 +28,15 @@ const InfluHomePage = () => {
   const [imageUrl, setImageUrl] = useState('');
   const [file, setFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isImageUploading, setIsImageUploading] = useState(false); // Track only image upload state
+  const [isImageUploading, setIsImageUploading] = useState(false);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+
 
   let influencer_id = localStorage.getItem("influencerId");
 
-
-
-  useEffect(() => {
-    const fetchInfluencer = async () => {
+  const fetchInfluencer = async () => {
       const url = `http://localhost:5000/getInfluencer/`;
 
       try {
@@ -73,6 +75,7 @@ const InfluHomePage = () => {
       }
     }
 
+  useEffect(() => {
     fetchInfluencer();
     getAdRequests();
   }, [influencer_id]);
@@ -170,15 +173,28 @@ const InfluHomePage = () => {
   };
 
 
-  const handleStatus = async (e) => {
+  const [selectedAd,setSelectedAd]=useState(null)
+
+  const handleStatus = async (e,ad_id) => {
     const { value } = e.target;
     console.log("Status:", value);
+
+    let newAd;
   
-    // Update only the status field in the advertisement state
-    setAdvertisement((prevAdvertisement) => ({
-      ...prevAdvertisement,
-      status: value
-    }));
+    const updatedAds = advertisement.map((ad) => {
+      if (ad.ad_id === ad_id) {
+        console.log("id:",ad_id);
+        console.log("press:",value);
+        newAd={ ...ad, status: value };
+        console.log("Upd Ad:", newAd);
+        return newAd;
+      }
+      return ad;
+    });
+
+    setAdvertisement(newAd);
+
+    console.log("Up:",newAd);
   
     try {
       const url = "http://localhost:5000/updateAd/";
@@ -188,28 +204,38 @@ const InfluHomePage = () => {
           'Content-Type': 'Application/JSON',
           'influencer_id': influencer_id
         },
-        body: JSON.stringify({
-          ...advertisement, // Include the entire advertisement object with updated status
-          status: value // Update the status based on the selected value
-        })
+        body: JSON.stringify(newAd)
       });
   
       const data = await response.json();
       if (response.ok) {
         setAdvertisement(data); // Update the advertisement state with the new data
       }
-  
+      
       console.log("Updated status data:", data);
+      getAdRequests();
   
     } catch (err) {
       console.log("Error in updating:", err);
     }
   };
+
+
+  const handleAdView = (ad) => {
+    setIsModalOpen(true); 
+    console.log("Deutials:",ad);
+    setSelectedAd(ad)// Open the modal when "View" is clicked
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false); // Function to close the modal
+  };
+
   
 
   return (
     <div className='flex flex-col md:flex-row gap-2'>
-       <div className='flex flex-row h-full bg-gray-200 md:w-[50%] lg:w-[25%]  items-center justify-center sm:ml-0 sm:justify-center md:items-center md:justify-center'>
+       <div className='flex flex-row  h-full bg-gray-200 md:w-[50%] lg:w-[25%]  items-center justify-center sm:ml-0 sm:justify-center md:items-center md:justify-center'>
         <br/>
         <div>
         <br/>
@@ -218,7 +244,7 @@ const InfluHomePage = () => {
         <div className="flex flex-col items-center justify-center">
           {
             profile.profile_photo_url ? (
-              <img src={profile.profile_photo_url} className='w-40 h-40 md:w-60 md:h-60 rounded-[50%]  shadow-2xl' alt="Profile" />
+              <img src={profile.profile_photo_url} className='w-40 h-40 md:w-60 md:h-60 rounded-[50%]  shadow-2xl p-1  border-black border-1 bg-white' alt="Profile" />
             ) : (
               profile.gender === 'Male' ? (
                 <img src={maleIcon} className='w-40 h-40 md:w-60 md:h-60 rounded-[50%]' alt="Male Icon" />
@@ -234,7 +260,7 @@ const InfluHomePage = () => {
         </div>
 
         {/* Editable Fields */}
-        <div className='flex flex-col justify-start md:ml-10'>
+        <div className='flex flex-col w-[80%] m-auto align-middle justify-start md:ml-10'>
           <div className="flex flex-row">
             <label>Username: </label>
             <input
@@ -251,7 +277,7 @@ const InfluHomePage = () => {
             <input
               type="text"
               name="niche"
-              className="ml-2 p-1 rounded-xl  border-gray-400"
+              className="ml-9 p-1 rounded-xl  border-gray-400"
               value={profile.niche}
               onChange={handleChanges}
             />
@@ -262,7 +288,7 @@ const InfluHomePage = () => {
             <input
               type="text"
               name="platform"
-              className="ml-2 p-1 rounded-xl  border-gray-400"
+              className="ml-4 p-1 rounded-xl  border-gray-400"
               value={profile.platform}
               onChange={handleChanges}
             />
@@ -273,14 +299,14 @@ const InfluHomePage = () => {
             <input
               type="text"
               name="reach"
-              className="ml-2 p-1 rounded-xl  border-gray-400"
+              className="ml-8 p-1 rounded-xl  border-gray-400"
               value={profile.reach}
               onChange={handleChanges}
             />
           </div>
 
           {/* Update Button */}
-          <button onClick={handleProfileUpdate} className="mt-4 bg-blue-500 hover:bg-green-500 transition-all hover:scale-110 text-white p-2 rounded">
+          <button onClick={handleProfileUpdate} className="mt-4 mb-2.5   bg-blue-500 hover:bg-green-500 transition-all hover:scale-110 text-white p-2 rounded-full">
             Update Profile
           </button>
         </div>
@@ -297,41 +323,89 @@ const InfluHomePage = () => {
     
     </div>
       
-      <div className='w-[80%]'>
+      <div className='w-[100%]'>
         <p className="p-5">Welcome {profile.username}!</p>
+        <p className='px-5 pb-5'>Active campaigns</p>
+        <div className="flex-grow relative overflow-auto">
         <div className="w-full m-auto shadow-lg rounded-xl overflow-auto">
           {advertisement.length > 0 ? (
             <table className='w-full text-sm text-left rtl:text-right text-black-500'>
               <thead className='bg-gray-100'>
                 <tr>
-                  <th scope="col" className="px-6 py-3">CAMPAIGN</th>
-                  <th scope="col" className="px-6 py-3">SPONSOR</th>
-                  <th scope="col" className="px-6 py-3">STATUS</th>
+                  <th scope="col" className="px-6 py-3 w-[25%]">CAMPAIGN</th>
+                  <th scope="col" className="px-6 py-3 w-[25%]">SPONSOR</th>
+                  <th scope="col" className="px-6 py-3 w-[20%]">AMOUNT</th>
+                  <th scope="col" className="px-6 py-3 w-[30%]">STATUS</th>
                 </tr>
               </thead>
               <tbody>
               {advertisement.map((ad, index) => (
-                ad.campaignName && (
-                  <tr key={index} className="odd:bg-white even:bg-gray-100">
-                    <td className="px-4 py-3">{ad.campaignName}</td>
+                ad.campaignName && ((ad.status==="accept") || (ad.status==="view")) && (
+                  <tr key={index} className="odd:bg-white even:bg-gray-100 hover:bg-green-300">
+                    <td className="px-6 py-3">{ad.campaignName}</td>
                     <td className="px-6 py-3">{ad.sponsorName}</td>
+                    <td className="px-6 py-3">{ad.payment_amount}</td>
                     <td className="px-6 py-3">
-                      <button className='p-2 px-3 mr-2 text-white rounded-xl shadow-lg bg-amber-400' value="view" onClick={(e) => handleStatus(e, ad.ad_id)}>View</button>
-                      {ad.status === 'pending' && (
-                        <>
-                          <button className='p-2 mr-2 text-white rounded-xl shadow-lg bg-green-400' value="accept" onClick={(e) => handleStatus(e, ad.ad_id)}>Accept</button>
-                          <button className='p-2 mr-2 text-white rounded-xl shadow-lg bg-red-400' value="reject" onClick={(e) => handleStatus(e, ad.ad_id)}>Reject</button>
-                        </>
-                      )}
+                      <button className='p-2 mr-2 text-white rounded-xl shadow-lg bg-amber-400'onClick={() => handleAdView(ad)}>View</button>
                     </td>
                   </tr>
                 )
               ))}
+
+              {isModalOpen && (
+                      <RequestViewModal onClose={closeModal} adDetails={selectedAd} /> // Pass a close function as a prop
+                    )}
               </tbody>
             </table>
           ) : (
             <p>No advertisements available</p>
           )}
+      
+         </div>
+         <br/>
+        <label className='p-2'>New Requests</label>
+        <br/>
+          <br/>
+          <div className="flex-grow relative overflow-auto">
+        <div className="w-full m-auto shadow-lg rounded-xl overflow-auto">
+          {advertisement.length > 0 ? (
+            <table className='w-full text-sm text-left rtl:text-right text-black-500'>
+              <thead className='bg-gray-100'>
+                <tr>
+                  <th scope="col" className="px-6 py-3 w-[25%]">CAMPAIGN</th>
+                  <th scope="col" className="px-6 py-3 w-[25%]">SPONSOR</th>
+                  <th scope="col" className="px-6 py-3 w-[20%]">AMOUNT</th>
+                  <th scope="col" className="px-6 py-3 w-[30%]">STATUS</th>
+                </tr>
+              </thead>
+              <tbody>
+              {advertisement.map((ad, index) => (
+                ad.campaignName && ad.status === 'pending' && (
+                  <tr key={index} className="odd:bg-white even:bg-gray-100 hover:bg-green-300">
+                    <td className="px-6 py-3">{ad.campaignName}</td>
+                    <td className="px-6 py-3">{ad.sponsorName}</td>
+                    <td className="px-6 py-3">{ad.payment_amount}</td>
+                    <td className="px-6 py-3">
+                      <button className='p-2 px-3 mr-2 text-white rounded-xl shadow-lg bg-amber-400' onClick={handleAdView}>View</button>
+                      <button className='p-2 mr-2 text-white rounded-xl shadow-lg bg-green-400' value="accept" onClick={(e) => handleStatus(e, ad.ad_id)}>Accept</button>
+                      <button className='p-2 mr-2 text-white rounded-xl shadow-lg bg-red-400' value="reject" onClick={(e) => handleStatus(e, ad.ad_id)}>Reject</button>
+                    </td>
+                  </tr>
+                )
+              ))}
+
+            {isModalOpen && (
+              <RequestViewModal onClose={closeModal} adDetails={selectedAd}/> // Pass a close function as a prop
+            )}
+            </tbody>
+
+            </table>
+            
+          ) : (
+            <p>No advertisements available</p>
+          )}
+        </div>
+        </div>
         </div>
       </div>
     </div>
@@ -339,3 +413,4 @@ const InfluHomePage = () => {
 };
 
 export default InfluHomePage;
+
