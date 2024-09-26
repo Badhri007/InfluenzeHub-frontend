@@ -79,7 +79,7 @@ const SingleCampaign = () => {
 
         const data=await response.json();
         console.log("Ad Requests got:",data);
-        navigate('/AllAdRequests',{ state: { allAdRequests: data , CampaignName:currentCampaign[0].name} })
+        navigate('/AllAdRequests',{ state: { campaign_id: campaign_id , CampaignName:currentCampaign[0].name} })
     }
     catch(err)
     {

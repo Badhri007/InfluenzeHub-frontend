@@ -1,7 +1,7 @@
 import React from "react";
 import closeIcon from "../../assets/close.png"
 
-const RequestViewModal = ({ onClose, adDetails }) => {
+const RequestViewModal = ({ onClose, adDetails , handleStatus }) => {
 
 
     console.log("AD:",adDetails);
@@ -33,15 +33,29 @@ const RequestViewModal = ({ onClose, adDetails }) => {
             <br/>
             <div className="flex flex-row gap-5">
                 <label className=" rounded-full p-1.5 font-semibold ">Amount </label>
-                <p className="bg-gray-100 font-semibold  rounded-xl p-1.5 align-middle">{adDetails.payment_amount}</p>
+                <p className="bg-gray-100 font-semibold  rounded-xl p-1.5 align-middle">${adDetails.payment_amount}</p>
             </div>
             <br/>
             <div className="flex flex-row gap-5">
-            
-            <button className="rounded-xl bg-red-500 p-2 text-white text-md ">Reject</button>
-            <button className="rounded-xl bg-amber-500 p-2 text-white  text-md">Negotiate</button>
-            <button className="rounded-xl bg-green-500 p-2 text-white  text-md">Accept</button>
-            
+                <label className=" rounded-full p-1.5 font-semibold ">Start Date </label>
+                <p className="bg-gray-100 font-semibold  rounded-xl p-1.5 align-middle">{adDetails.campaign_startDate.slice(0,10).split("-").reverse().join("/")}</p>
+            </div>
+            <br/>
+            <div className="flex flex-row gap-5">
+                <label className=" rounded-full p-1.5 font-semibold ">End Date </label>
+                <p className="bg-gray-100 font-semibold  rounded-xl p-1.5 align-middle">{adDetails.campaign_endDate.slice(0,10).split("-").reverse().join("/")}</p>
+            </div>
+            <br/>
+
+
+            <div className="flex flex-row gap-5">
+            {adDetails.status==="pending" && (
+            <button className="rounded-xl bg-red-500 p-2 text-white text-md " value="reject" onClick={(e)=>{handleStatus(e,adDetails.ad_id)}}>Reject</button>
+            )}
+            {/* <button className="rounded-xl bg-amber-500 p-2 text-white  text-md">Negotiate</button> */}
+            {adDetails.status==="pending" && (
+            <button className="rounded-xl bg-green-500 p-2 text-white  text-md" value="accept" onClick={(e)=>{handleStatus(e,adDetails.ad_id)}}>Accept</button>
+            )}
             </div>
         
           

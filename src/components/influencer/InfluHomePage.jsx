@@ -15,15 +15,21 @@ const InfluHomePage = () => {
     profile_photo_url: ''
   });
 
-  const [advertisement,setAdvertisement]=useState({
-    name:'',
-    campaign_id:'',
-    requirements:'',
-    payment_amount:'',
-    status:'',
-    campaignName:'',
-    sponsorName:''
-  });
+  // const [advertisement,setAdvertisement]=useState({
+  //   name:'',
+  //   campaign_id:'',
+  //   requirements:'',
+  //   payment_amount:'',
+  //   status:'',
+  //   campaignName:'',
+  //   sponsorName:'',
+  //   campaign_startDate:'',
+  //   campaign_endDate:''
+  // });
+
+  const [advertisement,setAdvertisement]=useState([]);
+
+
 
   const [imageUrl, setImageUrl] = useState('');
   const [file, setFile] = useState(null);
@@ -214,17 +220,51 @@ const InfluHomePage = () => {
       
       console.log("Updated status data:", data);
       getAdRequests();
+
+      if(isModalOpen===true)
+      {
+        setIsModalOpen(false);
+      }
   
     } catch (err) {
       console.log("Error in updating:", err);
     }
   };
 
+  const [activeCampaignPage, setActiveCampaignPage] = useState(1);
+  const [newRequestPage, setNewRequestPage] = useState(1);
+  const ITEMS_PER_PAGE=3;
+  const ACTIVE_ITEMS_PER_PAGE=2;
+
+  const getActiveRequests = () => {
+    const activeCampaigns = advertisement.filter(ad => ad.campaignName && (ad.status === "accept" || ad.status === "view"));
+    const startIndex = (activeCampaignPage - 1) * ACTIVE_ITEMS_PER_PAGE;
+    console.log("PG:",activeCampaigns.slice(startIndex, startIndex + ACTIVE_ITEMS_PER_PAGE));
+    return activeCampaigns.slice(startIndex, startIndex + ACTIVE_ITEMS_PER_PAGE);
+  };
+
+
+  const getNewRequests = () => {
+    const newRequests = advertisement.filter(ad => ad.campaignName && ad.status === 'pending');
+    const startIndex = (newRequestPage - 1) * ITEMS_PER_PAGE;
+
+    
+    return newRequests.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  };
+
+  // Function to handle page changes
+  const handlePageChange = (type, newPage) => {
+    if (type === 'active') {
+      setActiveCampaignPage(newPage);
+    } else if (type === 'request') {
+      setNewRequestPage(newPage);
+    }
+  };
 
   const handleAdView = (ad) => {
     setIsModalOpen(true); 
-    console.log("Deutials:",ad);
-    setSelectedAd(ad)// Open the modal when "View" is clicked
+    console.log("Detials:",ad);
+    setSelectedAd(ad);// Open the modal when "View" is clicked
   };
 
   const closeModal = () => {
@@ -232,10 +272,11 @@ const InfluHomePage = () => {
   };
 
   
+  
 
   return (
     <div className='flex flex-col md:flex-row gap-2'>
-       <div className='flex flex-row  h-full bg-gray-200 md:w-[50%] lg:w-[25%]  items-center justify-center sm:ml-0 sm:justify-center md:items-center md:justify-center'>
+       <div className='flex flex-row  h-full bg-gray-200 md:w-[50%] lg:w-[25%] items-center justify-center sm:ml-0 sm:justify-center sm:items-center md:items-center md:justify-center'>
         <br/>
         <div>
         <br/>
@@ -254,13 +295,15 @@ const InfluHomePage = () => {
             )
           }
           <br/>
-          <input type="file" className="ml-10" name="profile-photo" onChange={handleChanges} />
+          <label className="inline-block bg-blue-400 text-white p-2 rounded-full">Change Photo<input type="file" className="hidden" name="profile-photo" onChange={handleChanges}/></label>
+
+          {/* <input type="file" className="ml-10" name="profile-photo" onChange={handleChanges}/> */}
           <br />
           
         </div>
 
         {/* Editable Fields */}
-        <div className='flex flex-col w-[80%] m-auto align-middle justify-start md:ml-10'>
+        <div className='flex flex-col w-[80%] m-auto items-center justify-start md:ml-10'>
           <div className="flex flex-row">
             <label>Username: </label>
             <input
@@ -306,7 +349,7 @@ const InfluHomePage = () => {
           </div>
 
           {/* Update Button */}
-          <button onClick={handleProfileUpdate} className="mt-4 mb-2.5   bg-blue-500 hover:bg-green-500 transition-all hover:scale-110 text-white p-2 rounded-full">
+          <button onClick={handleProfileUpdate} className="mt-4 mb-2.5  w-[80%] bg-blue-500 hover:bg-green-500 transition-all hover:scale-110 text-white p-2 rounded-full">
             Update Profile
           </button>
         </div>
@@ -339,7 +382,7 @@ const InfluHomePage = () => {
                 </tr>
               </thead>
               <tbody>
-              {advertisement.map((ad, index) => (
+              {getActiveRequests().map((ad, index) => (
                 ad.campaignName && ((ad.status==="accept") || (ad.status==="view")) && (
                   <tr key={index} className="odd:bg-white even:bg-gray-100 hover:bg-green-300">
                     <td className="px-6 py-3">{ad.campaignName}</td>
@@ -362,6 +405,11 @@ const InfluHomePage = () => {
           )}
       
          </div>
+         <div className='flex justify-evenly m-2'>
+          <button className='bg-blue-400 text-white rounded-full p-2 disabled:bg-gray-300' disabled={activeCampaignPage === 1}  onClick={() => handlePageChange('active', activeCampaignPage - 1)}>Previous</button>
+          <button className='bg-blue-400 text-white rounded-full p-2 disabled:bg-gray-300' disabled={getActiveRequests().length < ACTIVE_ITEMS_PER_PAGE} onClick={() => handlePageChange('active', activeCampaignPage + 1)}>Next Page</button>
+        </div>
+        
          <br/>
         <label className='p-2'>New Requests</label>
         <br/>
@@ -379,14 +427,14 @@ const InfluHomePage = () => {
                 </tr>
               </thead>
               <tbody>
-              {advertisement.map((ad, index) => (
+              {getNewRequests().map((ad, index) => (
                 ad.campaignName && ad.status === 'pending' && (
                   <tr key={index} className="odd:bg-white even:bg-gray-100 hover:bg-green-300">
                     <td className="px-6 py-3">{ad.campaignName}</td>
                     <td className="px-6 py-3">{ad.sponsorName}</td>
                     <td className="px-6 py-3">{ad.payment_amount}</td>
                     <td className="px-6 py-3">
-                      <button className='p-2 px-3 mr-2 text-white rounded-xl shadow-lg bg-amber-400' onClick={handleAdView}>View</button>
+                      <button className='p-2 px-3 mr-2 text-white rounded-xl shadow-lg bg-amber-400'onClick={() => handleAdView(ad)}>View</button>
                       <button className='p-2 mr-2 text-white rounded-xl shadow-lg bg-green-400' value="accept" onClick={(e) => handleStatus(e, ad.ad_id)}>Accept</button>
                       <button className='p-2 mr-2 text-white rounded-xl shadow-lg bg-red-400' value="reject" onClick={(e) => handleStatus(e, ad.ad_id)}>Reject</button>
                     </td>
@@ -395,7 +443,7 @@ const InfluHomePage = () => {
               ))}
 
             {isModalOpen && (
-              <RequestViewModal onClose={closeModal} adDetails={selectedAd}/> // Pass a close function as a prop
+              <RequestViewModal onClose={closeModal} adDetails={selectedAd} handleStatus={handleStatus}/> // Pass a close function as a prop
             )}
             </tbody>
 
@@ -405,6 +453,13 @@ const InfluHomePage = () => {
             <p>No advertisements available</p>
           )}
         </div>
+
+        <div className='flex justify-evenly m-2'>
+          <button className='bg-blue-400 text-white rounded-full p-2 disabled:bg-gray-300' disabled={newRequestPage === 1}  onClick={() => handlePageChange('request', newRequestPage - 1)}>Previous</button>
+          <button className='bg-blue-400 text-white rounded-full p-2 disabled:bg-gray-300' disabled={getNewRequests().length < ITEMS_PER_PAGE} onClick={() => handlePageChange('request', newRequestPage + 1)}>Next Page</button>
+        </div>
+        
+
         </div>
         </div>
       </div>

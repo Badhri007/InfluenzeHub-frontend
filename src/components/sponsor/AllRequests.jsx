@@ -1,21 +1,47 @@
-import React from 'react'
+import React,{useEffect,useState} from 'react'
 import {useLocation,useNavigate} from 'react-router-dom'
 import SponsoNavbar from './SponsoNavbar';
-import backPage from '../../assets/backpage.png';
+// import backPage from '../../assets/backpage.png';
 
 const AllRequests = () => {
   const location = useLocation();
-  const allAdRequests = location.state?.allAdRequests;
+  const [allAdRequests,setAllAdRequests]=useState([]);
+
   const campaignName = location.state?.CampaignName;
 
+  const campaign_id = location.state?.campaign_id;
 
-  const navigate=useNavigate();
+  useEffect(()=>{
 
-//   const handleBackPage=()=>{
-//     const campaignId = allAdRequests[0].campaignId; 
-//     console.log("Campaign ID:", campaignId);
-//     navigate(`/campaign/${campaignId}`);
-//   }
+    const getCampaignAds=async()=>{
+      // let campaign_id=campaignId;
+      console.log("Campaign id:",campaign_id);
+
+    const url="http://localhost:5000/getAllAdRequests"
+    try
+    { 
+        const response=await fetch(url,{
+          method:"GET",
+          headers:{
+            "Content-Type":"Application/JSON",   
+            "campaign_id":campaign_id       
+          }
+        });
+
+        const data=await response.json();
+        setAllAdRequests(data);
+        console.log("Ad Requests got:",data);
+    }
+    catch(err)
+    {
+      console.log("Error in getting adrequest for campaign:", err);
+    }
+    }
+
+    getCampaignAds();
+  },[])
+
+
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-300">
