@@ -50,7 +50,7 @@ const SponsoNavbar = () => {
             <li><a href="/" className="text-white block px-2 py-1  cursor-pointer hover:underline">Home</a></li>
             <li><a href="#" className="text-white block px-2 py-1  cursor-pointer hover:underline">Profile</a></li>
             <li><a href="/sponsorCampaign" className="text-white block px-2 py-1  cursor-pointer hover:underline">Campaign</a></li>
-            <li><a href="#" className="text-white block px-2 py-1  cursor-pointer hover:underline">Find</a></li>
+            <li><a href="/find" className="text-white block px-2 py-1  cursor-pointer hover:underline">Find</a></li>
             <li><a onClick={logout} className="text-white block px-2 py-1 cursor-pointer hover:underline">Logout</a></li>
           </ul>
         </div>
