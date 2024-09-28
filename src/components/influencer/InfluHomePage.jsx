@@ -237,6 +237,7 @@ const InfluHomePage = () => {
   const ACTIVE_ITEMS_PER_PAGE=2;
 
   const getActiveRequests = () => {
+    if (!Array.isArray(advertisement)) return [];
     const activeCampaigns = advertisement.filter(ad => ad.campaignName && (ad.status === "accept" || ad.status === "view"));
     const startIndex = (activeCampaignPage - 1) * ACTIVE_ITEMS_PER_PAGE;
     console.log("PG:",activeCampaigns.slice(startIndex, startIndex + ACTIVE_ITEMS_PER_PAGE));
@@ -245,6 +246,7 @@ const InfluHomePage = () => {
 
 
   const getNewRequests = () => {
+    if (!Array.isArray(advertisement)) return [];
     const newRequests = advertisement.filter(ad => ad.campaignName && ad.status === 'pending');
     const startIndex = (newRequestPage - 1) * ITEMS_PER_PAGE;
 
