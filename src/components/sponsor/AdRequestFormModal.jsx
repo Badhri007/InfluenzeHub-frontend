@@ -199,6 +199,24 @@ const AdRequestFormModal = ({ open, onClose, campaignId, setOpen,selectedInfluen
       >
         <p className="text-xl font-semibold mb-5 text-gray-800">Ad Request</p>
 
+
+        <div className="flex flex-col">
+            <label className="text-sm text-gray-600 mb-1">Influencer</label>
+            <p> </p>
+            <button
+              type="text"
+              name="influencer_requested"
+              value={formData.influencer_requested}
+              onChange={handleChanges}
+              className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-amber-400 mt-2"
+              placeholder="Selected Influencer"
+            >
+              {formData.influencer_requested}
+            
+              </button>
+              <label onClick={handleChooseInfluencer} className='rounded-lg text-center p-2 text-md underline'> Choose Influencer </label>
+          </div>
+
         <div className="space-y-4">
           <div className="flex flex-col">
             <label className="text-sm text-gray-600 mb-1">Ad Name</label>
@@ -235,22 +253,7 @@ const AdRequestFormModal = ({ open, onClose, campaignId, setOpen,selectedInfluen
             />
           </div>
 
-          <div className="flex flex-col">
-            <label className="text-sm text-gray-600 mb-1">Influencer</label>
-            <p> </p>
-            <button
-              type="text"
-              name="influencer_requested"
-              value={formData.influencer_requested}
-              onChange={handleChanges}
-              className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-amber-400 mt-2"
-              placeholder="Selected Influencer"
-            >
-              {formData.influencer_requested}
-            
-              </button>
-              <label onClick={handleChooseInfluencer} className='rounded-lg text-center p-2 text-md underline'> Choose Influencer </label>
-          </div>
+
         </div>
 
         <div className="mt-6 flex justify-end space-x-4">

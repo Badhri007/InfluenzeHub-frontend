@@ -198,7 +198,7 @@ const InfluHomePage = () => {
       return ad;
     });
 
-    setAdvertisement(newAd);
+    setAdvertisement(updatedAds);
 
     console.log("Up:",newAd);
   
@@ -295,7 +295,7 @@ const InfluHomePage = () => {
             )
           }
           <br/>
-          <label className="inline-block bg-blue-400 text-white p-2 rounded-full">Change Photo<input type="file" className="hidden" name="profile-photo" onChange={handleChanges}/></label>
+          <label className="inline-block bg-blue-500 text-white p-2 rounded-full hover:bg-green-500">Select Photo<input type="file" className="hidden" name="profile-photo" onChange={handleChanges}/></label>
 
           {/* <input type="file" className="ml-10" name="profile-photo" onChange={handleChanges}/> */}
           <br />
@@ -349,7 +349,7 @@ const InfluHomePage = () => {
           </div>
 
           {/* Update Button */}
-          <button onClick={handleProfileUpdate} className="mt-4 mb-2.5  w-[80%] bg-blue-500 hover:bg-green-500 transition-all hover:scale-110 text-white p-2 rounded-full">
+          <button onClick={handleProfileUpdate} className="mt-4 mb-2.5  w-[80%] bg-blue-500 hover:bg-green-500 transition-all hover:scale-110 text-white p-3 rounded-full">
             Update Profile
           </button>
         </div>
