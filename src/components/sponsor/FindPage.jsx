@@ -3,11 +3,14 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import SponsoNavbar from './SponsoNavbar';
 import maleIcon from '../../assets/male.jpg';
 import femaleIcon from '../../assets/female.jpg'; // Assuming you have maleIcon for male influencers
+import FilterPage from './FilterPage';
 
 const FindPage = () => {
   const [influencers, setAllInfluencers] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
+
+  let idCampaign="empty";
 
   const getAllInfluencers = async () => {
     const url = "http://localhost:5000/getAllInfluencers";
@@ -34,6 +37,7 @@ const FindPage = () => {
   }, []);
 
   const handleChoose = (influencer) => {
+    idCampaign=location.state.campaignId
     navigate('/campaign/' + location.state.campaignId, {
       state: {
         selectedInfluencer: influencer.username, // Pass selected influencer
@@ -42,9 +46,14 @@ const FindPage = () => {
     });
   };
 
+  const handleFilterChange = (filt_influencers) => {
+    setAllInfluencers(filt_influencers);  // Update the filtered campaigns based on search
+  };
+
   return (
     <div className='bg-gray-100 h-screen'>
       <SponsoNavbar />
+      <FilterPage handleFilterChange={handleFilterChange}/>
       <div className=''>
         <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5'>
           {influencers.map((influencer, index) => (
@@ -52,18 +61,20 @@ const FindPage = () => {
               key={index}
               className='bg-white shadow-lg rounded-xl flex flex-col items-center justify-center w-[80%] m-4 p-4'>
               {influencer.profile_photo_url ? (
-                <img src={influencer.profile_photo_url} className='bg-gray-50 shadow-xl w-[80%] h-[90%] rounded-[50%] p-1' alt='Influencer' />
+                <img src={influencer.profile_photo_url} className='bg-gray-50 shadow-xl w-[70%] h-40  md:w-[80%] md:h-[90%] rounded-[50%] p-1' alt='Influencer' />
               ) : influencer.gender === "male" ? (
                 <img src={maleIcon} className='w-[80%] h-[90%] bg-gray-50 rounded-[50%] shadow-xl' alt='Male Influencer' />
               ) : (
                 <img src={femaleIcon} className='w-[80%] h-[90%] bg-gray-50 rounded-[50%] shadow-xl' alt='Female Influencer' />
               )}
               <p className='mt-2 font-semibold'>{influencer.username}</p>
-              <button
+              {idCampaign!=="empty" && 
+              (<button
                 className='bg-green-500 text-white px-4 py-2 rounded-lg mt-4'
                 onClick={() => handleChoose(influencer)}>
                 Request
               </button>
+              )}
             </div>
           ))}
         </div>
