@@ -10,7 +10,7 @@ const FindPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  let idCampaign="empty";
+  const idCampaign = location.state?.campaignId || "empty";
 
   const getAllInfluencers = async () => {
     const url = "http://localhost:5000/getAllInfluencers";
@@ -37,7 +37,6 @@ const FindPage = () => {
   }, []);
 
   const handleChoose = (influencer) => {
-    idCampaign=location.state.campaignId
     navigate('/campaign/' + location.state.campaignId, {
       state: {
         selectedInfluencer: influencer.username, // Pass selected influencer

@@ -126,6 +126,10 @@ const InfluRegister = () => {
                     <option value="LinkedIn">LinkedIn</option>
                   </select>
                   <br />
+                  <label className='ml-4 md:ml-2'>{formData.platform} Account's URL</label>
+                  <br />
+                  <input type="text" name="social_media_url" value={formData.social_media_url} className="rounded-lg shadow-lg w-2/3 h-10 m-3 ml-4 md:ml-2 p-2 md:w-[80%]" placeholder="Account Link" onChange={handleChanges} />
+                  <br />
                 </div>
               </div>
               <br />

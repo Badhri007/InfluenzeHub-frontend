@@ -12,20 +12,11 @@ const InfluHomePage = () => {
     email: '',
     platform: '',
     reach: '',
-    profile_photo_url: ''
+    profile_photo_url: '',
+    social_media_url:''
   });
 
-  // const [advertisement,setAdvertisement]=useState({
-  //   name:'',
-  //   campaign_id:'',
-  //   requirements:'',
-  //   payment_amount:'',
-  //   status:'',
-  //   campaignName:'',
-  //   sponsorName:'',
-  //   campaign_startDate:'',
-  //   campaign_endDate:''
-  // });
+
 
   const [advertisement,setAdvertisement]=useState([]);
 

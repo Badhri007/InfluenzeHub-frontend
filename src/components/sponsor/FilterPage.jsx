@@ -57,15 +57,14 @@ const FilterPage = ({handleFilterChange}) => {
       };
 
   return (
+    <div>
+        <br/>
+        <br/>
     <div className='flex flex-col md:flex-row gap-1 md:gap-2 items-center justify-center'>
-    <br/>
-    <select
-      className='rounded-xl w-[40%] h-10 p-1 shadow-lg md:w-[20%] lg:w-[10%]'
-      name='category'
-      value={filter.category}
-      onChange={handleCategoryChange}  
-    >
-       <option value="">All Categories</option>
+    <p></p>
+
+    <select className='rounded-xl w-[40%] h-10 p-1 shadow-lg md:w-[20%] lg:w-[10%]' name='category' value={filter.category} onChange={handleCategoryChange} >
+     <option value="">All Categories</option>
         <option value="Sports">Sports</option>
         <option value="Science">Science</option>
         <option value="History">History</option>
@@ -76,9 +75,10 @@ const FilterPage = ({handleFilterChange}) => {
         <option value="Celebrities">Celebrities</option>
         <option value="Other">Other</option>
     </select>
+  
     <input
       type="text"
-      placeholder="Search..."
+      placeholder="Find Influencers..."
       name="searchText"
       value={filter.searchText}
       onChange={handleCategoryChange}
@@ -91,6 +91,7 @@ const FilterPage = ({handleFilterChange}) => {
     >
       Clear
     </button>
+  </div>
   </div>
   )
 }
