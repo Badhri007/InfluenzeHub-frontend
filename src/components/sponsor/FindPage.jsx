@@ -49,6 +49,10 @@ const FindPage = () => {
     setAllInfluencers(filt_influencers);  // Update the filtered campaigns based on search
   };
 
+  const handleView=(influencerId)=>{
+    navigate('/influencer/'+ influencerId);
+  }
+
   return (
     <div className='bg-gray-100 h-screen'>
       <SponsoNavbar />
@@ -58,7 +62,7 @@ const FindPage = () => {
           {influencers.map((influencer, index) => (
             <div
               key={index}
-              className='bg-white shadow-lg rounded-xl flex flex-col items-center justify-center w-[80%] m-4 p-4'>
+              className='bg-white shadow-lg rounded-xl flex flex-col items-center justify-center w-[80%] m-4 p-4  hover:scale-110 transition-all' onClick={()=>{handleView(influencer._id)}}>
               {influencer.profile_photo_url ? (
                 <img src={influencer.profile_photo_url} className='bg-gray-50 shadow-xl w-[70%] h-40  md:w-[80%] md:h-[90%] rounded-[50%] p-1' alt='Influencer' />
               ) : influencer.gender === "male" ? (
