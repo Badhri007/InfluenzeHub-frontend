@@ -13,13 +13,13 @@ const FilterPage = ({handleFilterChange}) => {
           ...filter,
           [name]: value,
         };
-    
-        // Update the filter state
+
         setFilter(updatedFilter);
     
         console.log('Category filter:', updatedFilter.category);
         console.log('Search Text:', updatedFilter.searchText);
     
+
         try {
           const url = 'http://localhost:5000/getInfluencersCategoryWise/';
           const response = await fetch(url, {
@@ -27,21 +27,15 @@ const FilterPage = ({handleFilterChange}) => {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(updatedFilter),  // Use the updated filter object
+            body: JSON.stringify(updatedFilter), 
           });
     
           if (response.ok) {
             const data = await response.json();
             console.log('Filtered influencers:', data);
-    
-            // Filter influencers based on search text
-            const matchedInfluencers = data.filter((influencer) =>
-              influencer.username.toLowerCase().includes(updatedFilter.searchText.toLowerCase())
-            );
-            
-            setAllInfluencers(matchedInfluencers);
-            // Pass the filtered influencers to the parent component
-            handleFilterChange(matchedInfluencers);
+
+            setAllInfluencers(data);
+            handleFilterChange(data);
           } else {
             console.error('Error fetching influencers:', response.status, response.statusText);
           }

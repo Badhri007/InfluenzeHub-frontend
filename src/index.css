@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.slick-slide > div{
+    margin:0 10px;
+}
+
+.slick-prev:before, .slick-next:before {
+    font-size: 30px; /* Increase the font size for the arrow */
+    color: gray; /* You can change the color as needed */
+  }
+  
