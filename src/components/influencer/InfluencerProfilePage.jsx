@@ -138,6 +138,10 @@ const InfluencerProfilePage = () => {
     prevArrow: <SamplePrevArrow />
   };
 
+const totalPayment = advertisement.reduce((sum, ad) => sum + ad.payment_amount, 0);
+const averagePayment = advertisement.length > 0 ? (totalPayment / advertisement.length).toFixed(2) : 0;
+
+
   return (
     <div className="min-h-screen bg-gray-100">
       <SponsoNavbar />
@@ -256,7 +260,7 @@ const InfluencerProfilePage = () => {
           <div className="bg-white p-6 shadow-lg rounded-lg">
             <p className="text-center text-xl font-semibold mb-4">Stats</p>
             <div className="flex flex-col items-center space-y-4">
-              <label className="text-lg font-medium">Average Pay/Advertisement: $1200</label>
+              <label className="text-lg font-medium">Average Pay/Advertisement:${averagePayment}</label>
               <label className="text-lg font-medium">Total Ads: {advertisement.length}</label>
             </div>
           </div>
