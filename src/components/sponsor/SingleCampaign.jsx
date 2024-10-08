@@ -41,7 +41,7 @@ const SingleCampaign = () => {
 
   useEffect(() => {
     viewCampaign();
-  }, [campaignId]); // Trigger effect only once when campaignId changes
+  }, [campaignId]); 
 
 
   useEffect(() => {

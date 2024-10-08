@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const SearchBar = ({ onFilterChange }) => {
+const SearchBar = ({ onFilterChange,onlyPublic }) => {
   const [filter, setFilter] = useState({ category: '', searchText: '' });
 
   const [allCampaigns,setAllCampaigns]=useState([]);
@@ -34,9 +34,18 @@ const SearchBar = ({ onFilterChange }) => {
         console.log('Filtered campaigns:', data);
 
         // Filter campaigns based on search text
-        const matchedCampaigns = data.filter((campaign) =>
+
+        let matchedCampaigns;
+         matchedCampaigns = data.filter((campaign) =>
           campaign.name.toLowerCase().includes(updatedFilter.searchText.toLowerCase())
         );
+
+        if(onlyPublic==='true')
+        {
+          matchedCampaigns = data.filter((campaign) =>
+            campaign.visibility.toLowerCase().includes('public')
+          );
+        }
         
         setAllCampaigns(matchedCampaigns);
         // Pass the filtered campaigns to the parent component
