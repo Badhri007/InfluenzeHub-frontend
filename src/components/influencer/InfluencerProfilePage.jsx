@@ -5,6 +5,7 @@ import femaleIcon from '../../assets/female.jpg';
 import twitterIcon from '../../assets/twitter.png';
 import youtubeIcon from '../../assets/youtube.png';
 import linkedinIcon from '../../assets/linkedin.png';
+import previousIcon from '../../assets/previous.png';
 import instagramIcon from '../../assets/instagram.png';
 import reachIcon from '../../assets/graph.png';
 import Slider from 'react-slick';
@@ -65,6 +66,9 @@ function SamplePrevArrow(props) {
   );
 }
 
+const goBack=()=>{
+  window.history.back();
+}
 
 
 const InfluencerProfilePage = () => {
@@ -147,6 +151,10 @@ const averagePayment = advertisement.length > 0 ? (totalPayment / advertisement.
       <SponsoNavbar />
       <div className="w-[95%] m-auto mt-5">
         {/* Influencer Profile Section */}
+        <button className='p-2 rounded-2xl bg-yellow-600 text-white hover:bg-yellow-700 flex flex-row gap-1' onClick={goBack}>
+          <img src={previousIcon} className='w-10 h-10'></img>
+          <p className='mt-2'>Go back</p>
+        </button>
         <div className="text-center text-2xl font-semibold mb-4">{influencerProfile.username}'s Profile</div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-white p-6 shadow-lg rounded-lg">
           {/* Profile Image */}
@@ -202,68 +210,67 @@ const averagePayment = advertisement.length > 0 ? (totalPayment / advertisement.
         {/* Ads and Stats Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           {/* Public Ads */}
-<div className="bg-white p-4 shadow-lg rounded-lg pb-8">
-  <p className="text-center text-xl font-semibold mb-2">
-    {influencerProfile.username}'s Public Ads
-  </p>
-  
-  {advertisement.length >= 3 ? (
-    // Render Slider if there are 3 or more ads
-    <Slider {...settings}>
-      {advertisement.map((ad, index) => (
-        <div
-          className="bg-gray-100 rounded-lg p-4 shadow-md flex items-center justify-center text-center"
-          key={index}
-        >
-          <div className='flex items-center justify-center'>
-            <img
-              src={ad.campaign_pic}
-              className="w-28 h-28 rounded-full object-cover mb-4"
-              alt={ad.name}
-            />
-          </div>
-          <div>
-            <p className="font-medium">{ad.name}</p>
-            <p className="text-gray-500">{ad.campaignName}</p>
-            <p className="text-gray-400">10 Days Campaign</p>
-          </div>
-        </div>
-      ))}
-    </Slider>
-  ) : (
-    // Render regular cards if there are less than 3 ads
-    <div className={`grid grid-cols-${advertisement.length} gap-4 w-[50%]`}>
-      {advertisement.map((ad, index) => (
-        <div
-          className="bg-gray-100 rounded-lg p-4 shadow-md text-center"
-          key={index}
-        >
-          <div className="flex items-center justify-center">
-            <img
-              src={ad.campaign_pic}
-              className="w-28 h-28 rounded-full object-cover mb-4"
-              alt={ad.name}
-            />
-          </div>
-          <div>
-            <p className="font-medium">{ad.name}</p>
-            <p className="text-gray-500">{ad.campaignName}</p>
-            <p className="text-gray-400">10 Days Campaign</p>
-          </div>
-        </div>
-      ))}
-    </div>
-  )}
-</div>
-
-          {/* Stats */}
-          <div className="bg-white p-6 shadow-lg rounded-lg">
-            <p className="text-center text-xl font-semibold mb-4">Stats</p>
-            <div className="flex flex-col items-center space-y-4">
-              <label className="text-lg font-medium">Average Pay/Advertisement:${averagePayment}</label>
-              <label className="text-lg font-medium">Total Ads: {advertisement.length}</label>
+        <div className="bg-white p-4 shadow-lg rounded-lg pb-8">
+          <p className="text-center text-xl font-semibold mb-2">
+            {influencerProfile.username}'s Public Ads
+          </p>
+          
+          {advertisement.length >= 3 ? (
+            // Render Slider if there are 3 or more ads
+            <Slider {...settings}>
+              {advertisement.map((ad, index) => (
+                <div
+                  className="bg-gray-100 rounded-lg p-4 shadow-md flex items-center justify-center text-center"
+                  key={index}
+                >
+                  <div className='flex items-center justify-center'>
+                    <img
+                      src={ad.campaign_pic}
+                      className="w-28 h-28 rounded-full object-cover mb-4"
+                      alt={ad.name}
+                    />
+                  </div>
+                  <div>
+                    <p className="font-medium">{ad.name}</p>
+                    <p className="text-gray-500">{ad.campaignName}</p>
+                    <p className="text-gray-400">10 Days Campaign</p>
+                  </div>
+                </div>
+              ))}
+            </Slider>
+          ) : (
+            // Render regular cards if there are less than 3 ads
+            <div className={`grid grid-cols-${advertisement.length} gap-4 w-[50%]`}>
+              {advertisement.map((ad, index) => (
+                <div
+                  className="bg-gray-100 rounded-lg p-4 shadow-md text-center"
+                  key={index}
+                >
+                  <div className="flex items-center justify-center">
+                    <img
+                      src={ad.campaign_pic}
+                      className="w-28 h-28 rounded-full object-cover mb-4"
+                      alt={ad.name}
+                    />
+                  </div>
+                  <div>
+                    <p className="font-medium">{ad.name}</p>
+                    <p className="text-gray-500">{ad.campaignName}</p>
+                    <p className="text-gray-400">10 Days Campaign</p>
+                  </div>
+                </div>
+              ))}
             </div>
+          )}
+        </div>
+          {/* Stats */}
+        <div className="bg-white p-6 shadow-lg rounded-lg">
+          <p className="text-center text-xl font-semibold mb-4">Stats</p>
+          <div className="flex flex-col items-center space-y-4">
+            <label className="text-lg font-medium">Average Pay/Advertisement:${averagePayment}</label>
+            <label className="text-lg font-medium">Total Ads: {advertisement.length}</label>
           </div>
+        </div>
         </div>
       </div>
     </div>
