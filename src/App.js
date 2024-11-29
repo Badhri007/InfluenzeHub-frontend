@@ -31,6 +31,7 @@ const router = createBrowserRouter(createRoutesFromElements
       <Route path='/influFind' element={<InfluencerFindPage/>} />
       <Route path='/campaign/:id' element={<CampaignPage/>} />
       <Route path='/influencerStats/:id' element={<InfluencerProfilePage/>}/>
+
     </Route>
 
   )

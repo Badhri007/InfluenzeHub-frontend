@@ -13,8 +13,8 @@ const CampaignPage = ({campaign,onBack}) => {
   const navigate = useNavigate();
   const [influencers, setInfluencers] = useState([]);
 
-  
-  
+
+
   const viewCampaign = async () => {
     const url = "http://localhost:5000/getParticularCampaign";
     try {
@@ -39,12 +39,12 @@ const CampaignPage = ({campaign,onBack}) => {
 
   useEffect(() => {
     viewCampaign();
-  }, [campaignId]); 
+  }, [campaignId]);
 
 
   useEffect(() => {
     if (location.state && location.state.selectedInfluencer) {
-      setOpen(true); 
+      setOpen(true);
     }
   }, [location.state]);
 
@@ -145,6 +145,6 @@ const CampaignPage = ({campaign,onBack}) => {
 }
 
 
-  
+
 
 export default CampaignPage;

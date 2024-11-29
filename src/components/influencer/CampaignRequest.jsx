@@ -22,7 +22,7 @@ const CampaignRequest = ({ open, onClose, setOpen, campaign }) => {
 
   const getSponsor = async()=>{
     const url = 'http://localhost:5000/getSponsorById';
-  
+
     try {
     const response = await fetch(url, {
         headers: {
@@ -38,7 +38,7 @@ const CampaignRequest = ({ open, onClose, setOpen, campaign }) => {
         setCampaignSponsor(data);
         setOpen(false);
     }
-   
+
     else {
         console.error('Error:', response.status, response.statusText);
       }
@@ -100,7 +100,7 @@ useEffect(()=>{
     }
   };
 
-  
+
 
   return (
     <div
@@ -126,9 +126,9 @@ useEffect(()=>{
               placeholder="Selected Influencer"
             >
               {campaignSponsor}
-            
+
               </button>
-              
+
           </div>
 
         <div className="space-y-4">
