@@ -45,7 +45,21 @@ const InfluHomePage = () => {
           },
         });
         const data = await response.json();
-        setProfile(data); // Set the fetchedcon profile data
+        if(data.profile_photo_url)
+        {
+           setFile(data.profile_photo_url);
+        }
+        else if(data.gender === "Male")
+        {
+           setFile(maleIcon);
+        }
+        else{
+          setFile(femaleIcon);
+        }
+
+
+        setProfile(data);
+         // Set the fetchedcon profile data
       } catch (err) {
         console.log(err);
       }
@@ -115,9 +129,17 @@ const InfluHomePage = () => {
 
   const handleChanges = (e) => {
     const { name, value } = e.target;
-
     if (name === 'profile-photo') {
-      setFile(e.target.files[0]);
+      try{
+      const reader = new FileReader();
+      reader.readAsDataURL(e.target.files[0]);
+      reader.onloadend=()=>{
+        setFile(reader.result)
+      }
+    }
+    catch(er){
+      setFile(file)
+    }
     } else {
       // Handle other input changes
       setProfile((prevData) => ({
@@ -276,17 +298,9 @@ const InfluHomePage = () => {
         <div className='text-center m-auto text-xl font-semibold'>My Profile</div>
         <br/>
         <div className="flex flex-col items-center justify-center">
-          {
-            profile.profile_photo_url ? (
-              <img src={profile.profile_photo_url} className='w-40 h-40 md:w-60 md:h-60 rounded-[50%]  shadow-2xl p-1  border-black border-1 bg-white' alt="Profile" />
-            ) : (
-              profile.gender === 'Male' ? (
-                <img src={maleIcon} className='w-40 h-40 md:w-60 md:h-60 rounded-[50%]' alt="Male Icon" />
-              ) : (
-                <img src={femaleIcon} className='w-40 h-40 md:w-60 md:h-60 rounded-[50%]' alt="Female Icon" />
-              )
-            )
-          }
+        
+          <img src={file} className='w-40 h-40 md:w-60 md:h-60 rounded-[50%]  shadow-2xl p-1  border-black border-1 bg-white' />
+
           <br/>
           <label className="inline-block bg-blue-500 text-white p-2 rounded-full hover:bg-green-500">Select Photo<input type="file" className="hidden" name="profile-photo" onChange={handleChanges}/></label>
 

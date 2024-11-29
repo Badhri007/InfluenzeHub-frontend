@@ -55,7 +55,7 @@ const SponsorCampaign = () => {
         return;
       }
 
-      const url = `http://localhost:5000/getAllCampaigns`;
+      const url = `http://localhost:5000/getAllCampaignsSponsorWise`;
 
       const response = await fetch(url, {
         headers: {
@@ -194,7 +194,7 @@ const SponsorCampaign = () => {
 />
 
 
-      <br />
+      <br/>
       <br/>
 
       {displayCampaignForm && (

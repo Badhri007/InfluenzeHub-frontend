@@ -40,12 +40,6 @@ const SearchBar = ({ onFilterChange,onlyPublic }) => {
           campaign.name.toLowerCase().includes(updatedFilter.searchText.toLowerCase())
         );
 
-        if(onlyPublic==='true')
-        {
-          matchedCampaigns = data.filter((campaign) =>
-            campaign.visibility.toLowerCase().includes('public')
-          );
-        }
         
         setAllCampaigns(matchedCampaigns);
         // Pass the filtered campaigns to the parent component

@@ -99,7 +99,7 @@ const ListCampaigns = ({ campaigns = [], onFilterChange, fetchCampaigns,setCampa
         <img src={plusIcon} className='w-[50%] h-[50%] m-auto' ></img>
       </div>
         {campaigns.map((campaign, index) => (
-          <div key={campaign._id} className='bg-white shadow-xl rounded-xl p-4 m-1 flex flex-col hover:scale-110 transition-all duration-300 cursor-pointer' onClick={() => viewCampaign(campaign._id)}>
+          <div key={campaign._id} className='bg-white shadow-xl rounded-xl p-4 m-1 flex flex-col hover:scale-110 transition-all duration-300 cursor-pointer'>
             <div className='flex flex-row'>
               <div className='flex flex-col'>
                 <p className='font-roboto font-semibold text-xl'>{campaign.name}</p>
