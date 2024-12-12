@@ -151,7 +151,7 @@ const InfluHomePage = () => {
 
   const handleProfileUpdate = async () => {
     const uploadedImageUrl = await handleImageUpload();
-    
+
     if (!file) {
       // Set isSubmitting to true only if image is not being uploaded
       setIsSubmitting(true);
@@ -176,11 +176,11 @@ const InfluHomePage = () => {
 
       const data = await response.json();
       if (!file) {
-        setIsSubmitting(false); 
+        setIsSubmitting(false);
       }
 
       if (response.ok) {
-        setProfile(data); 
+        setProfile(data);
       }
       setIsImageUploading(false);
       console.log("Data response got:", data);
@@ -199,7 +199,7 @@ const InfluHomePage = () => {
     console.log("Status:", value);
 
     let newAd;
-  
+
     const updatedAds = advertisement.map((ad) => {
       if (ad.ad_id === ad_id) {
         console.log("id:",ad_id);
@@ -214,7 +214,7 @@ const InfluHomePage = () => {
     setAdvertisement(updatedAds);
 
     console.log("Up:",newAd);
-  
+
     try {
       const url = "http://localhost:5000/updateAd/";
       const response = await fetch(url, {
@@ -225,12 +225,12 @@ const InfluHomePage = () => {
         },
         body: JSON.stringify(newAd)
       });
-  
+
       const data = await response.json();
       if (response.ok) {
         setAdvertisement(data); // Update the advertisement state with the new data
       }
-      
+
       console.log("Updated status data:", data);
       getAdRequests();
 
@@ -238,7 +238,7 @@ const InfluHomePage = () => {
       {
         setIsModalOpen(false);
       }
-  
+
     } catch (err) {
       console.log("Error in updating:", err);
     }
@@ -263,7 +263,7 @@ const InfluHomePage = () => {
     const newRequests = advertisement.filter(ad => ad.campaignName && ad.status === 'pending');
     const startIndex = (newRequestPage - 1) * ITEMS_PER_PAGE;
 
-    
+
     return newRequests.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   };
 
@@ -277,7 +277,7 @@ const InfluHomePage = () => {
   };
 
   const handleAdView = (ad) => {
-    setIsModalOpen(true); 
+    setIsModalOpen(true);
     console.log("Detials:",ad);
     setSelectedAd(ad);// Open the modal when "View" is clicked
   };
@@ -286,27 +286,26 @@ const InfluHomePage = () => {
     setIsModalOpen(false); // Function to close the modal
   };
 
-  
-  
+
+
 
   return (
     <div className='flex flex-col md:flex-row gap-2'>
-       <div className='flex flex-row  h-full bg-gray-200 md:w-[50%] lg:w-[25%] items-center justify-center sm:ml-0 sm:justify-center sm:items-center md:items-center md:justify-center'>
+       <div className='flex flex-row h-screen bg-gray-200 md:w-[50%] lg:w-[25%]  justify-center  sm:ml-0 sm:justify-center sm:items-center md:items-start md:justify-center'>
         <br/>
         <div>
         <br/>
         <div className='text-center m-auto text-xl font-semibold'>My Profile</div>
         <br/>
         <div className="flex flex-col items-center justify-center">
-        
-          <img src={file} className='w-40 h-40 md:w-60 md:h-60 rounded-[50%]  shadow-2xl p-1  border-black border-1 bg-white' />
+
+          <img src={file} alt="" className='w-40 h-40 md:w-60 md:h-60 rounded-[50%]  shadow-2xl p-1  border-black border-1 bg-white' />
 
           <br/>
           <label className="inline-block bg-blue-500 text-white p-2 rounded-full hover:bg-green-500">Select Photo<input type="file" className="hidden" name="profile-photo" onChange={handleChanges}/></label>
 
-          {/* <input type="file" className="ml-10" name="profile-photo" onChange={handleChanges}/> */}
           <br />
-          
+
         </div>
 
         {/* Editable Fields */}
@@ -354,14 +353,15 @@ const InfluHomePage = () => {
               onChange={handleChanges}
             />
           </div>
-
           {/* Update Button */}
+
           <button onClick={handleProfileUpdate} className="mt-4 mb-2.5  w-[80%] bg-blue-500 hover:bg-green-500 transition-all hover:scale-110 text-white p-3 rounded-full">
             Update Profile
           </button>
         </div>
+
       </div>
-      
+
 
       {/* Show loading icon only during image upload */}
       {(isImageUploading || isSubmitting) && (
@@ -370,9 +370,9 @@ const InfluHomePage = () => {
         </div>
       )}
 
-    
+
     </div>
-      
+
       <div className='w-[100%]'>
         <p className="p-5">Welcome {profile.username}!</p>
         <p className='px-5 pb-5'>Active campaigns</p>
@@ -410,13 +410,13 @@ const InfluHomePage = () => {
           ) : (
             <p>No advertisements available</p>
           )}
-      
+
          </div>
          <div className='flex justify-evenly m-2'>
           <button className='bg-blue-400 text-white rounded-full p-2 disabled:bg-gray-300' disabled={activeCampaignPage === 1}  onClick={() => handlePageChange('active', activeCampaignPage - 1)}>Previous</button>
           <button className='bg-blue-400 text-white rounded-full p-2 disabled:bg-gray-300' disabled={getActiveRequests().length < ACTIVE_ITEMS_PER_PAGE} onClick={() => handlePageChange('active', activeCampaignPage + 1)}>Next Page</button>
         </div>
-        
+
          <br/>
         <label className='p-2'>New Requests</label>
         <br/>
@@ -455,7 +455,7 @@ const InfluHomePage = () => {
             </tbody>
 
             </table>
-            
+
           ) : (
             <p>No advertisements available</p>
           )}
@@ -465,7 +465,7 @@ const InfluHomePage = () => {
           <button className='bg-blue-400 text-white rounded-full p-2 disabled:bg-gray-300' disabled={newRequestPage === 1}  onClick={() => handlePageChange('request', newRequestPage - 1)}>Previous</button>
           <button className='bg-blue-400 text-white rounded-full p-2 disabled:bg-gray-300' disabled={getNewRequests().length < ITEMS_PER_PAGE} onClick={() => handlePageChange('request', newRequestPage + 1)}>Next Page</button>
         </div>
-        
+
 
         </div>
         </div>
@@ -475,4 +475,3 @@ const InfluHomePage = () => {
 };
 
 export default InfluHomePage;
-

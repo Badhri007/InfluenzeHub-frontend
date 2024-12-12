@@ -7,7 +7,7 @@ const Navbar = () => {
     <nav className="bg-gray-800 p-4">
       <div className="flex justify-between items-center">
         <div className="text-white text-lg font-bold">
-          Creato-Sponso
+          Influence Hub
         </div>
         <div className="lg:hidden">
           <button onClick={() => setIsOpen(!isOpen)} className="text-white focus:outline-none">

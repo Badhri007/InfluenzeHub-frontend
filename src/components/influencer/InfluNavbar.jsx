@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const [influencerId,setInfluencerId] = useState();
+
   const navigate=useNavigate();
 
   const logout=()=>{
@@ -12,11 +14,14 @@ const Navbar = () => {
     navigate("/influencerlogin");
   }
 
+  let influencer_id = localStorage.getItem('influencerId')
+  // setInfluencerId(influencer_id);
+
   return (
     <nav className="bg-gray-800 p-4">
       <div className="flex justify-between items-center">
         <div className="text-white text-lg font-bold">
-          Creato-Sponso
+        Influence Hub
         </div>
         <div className="lg:hidden">
           <button onClick={() => setIsOpen(!isOpen)} className="text-white focus:outline-none">
@@ -49,7 +54,7 @@ const Navbar = () => {
           <ul className="flex flex-col lg:flex-row lg:space-x-4 mt-2 lg:mt-0">
             <li><a href="/" className="text-white block px-2 py-1 cursor-pointer hover:underline">Profile</a></li>
             <li><a href="/influFind" className="text-white block px-2 py-1 cursor-pointer hover:underline">Find</a></li>
-            <li><a href="#" className="text-white block px-2 py-1 cursor-pointer hover:underline">Stats</a></li>
+            <li><a href={`/influencerStats/${influencer_id}`} className="text-white block px-2 py-1 cursor-pointer hover:underline">Stats</a></li>
             <li><button onClick={logout}  className="text-white block px-2 py-1 cursor-pointer hover:underline">Logout</button></li>
           </ul>
         </div>

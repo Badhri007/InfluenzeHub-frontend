@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import SponsoNavbar from './SponsoNavbar';
 import AdRequestFormModal from './AdRequestFormModal';
 import inboxIcon from '../../assets/inbox.png';
@@ -41,12 +41,12 @@ const SingleCampaign = () => {
 
   useEffect(() => {
     viewCampaign();
-  }, [campaignId]); 
+  }, [campaignId]);
 
 
   useEffect(() => {
     if (location.state && location.state.selectedInfluencer) {
-      setOpen(true); 
+      setOpen(true);
     }
   }, [location.state]);
 
@@ -107,7 +107,7 @@ const SingleCampaign = () => {
       <div className="flex flex-col md:flex-row">
         <div className='flex-shrink-0 flex-grow-0 md:w-[50%]'>
           <img src={currentCampaign[0].imageUrl}
-            className='w-full h-auto rounded-xl p-2'
+            className='w-[50%] m-auto h-auto rounded-xl p-2'
             style={{ objectFit: 'cover' }}
           />
         </div>
@@ -131,9 +131,9 @@ const SingleCampaign = () => {
             <label className='bg-gray-200 rounded-md p-1 font-semibold'>End Date </label>
             <p className='text-black text-lg ml-1'>{currentCampaign[0].endDate.slice(0, 10).split("-").reverse().join("/")}</p>
           </div>
-          <div className='flex p-2 gap-2 rounded-xl bg-green-500 flex-row hover:scale-110 hover:border-black transition-all' onClick={handleAdRequests} >
+          <div className='flex p-2 gap-2 rounded-xl bg-black flex-row hover:scale-110 hover:border-black transition-all' onClick={handleAdRequests} >
             <button className='text-white text-sm md:font-semibold md:text-lg'>My Requests</button>
-            <img src={inboxIcon} className='w-8 h-8 md:w-10 md:h-10'></img>
+            <img src={inboxIcon} alt="imageIcon" className='w-8 h-8 md:w-10 md:h-10'></img>
           </div>
         </div>
       </div>

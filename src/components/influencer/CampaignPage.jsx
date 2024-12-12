@@ -138,7 +138,7 @@ const CampaignPage = ({campaign,onBack}) => {
         <button className='bg-amber-300 rounded-xl p-2 hover:scale-110 transition-all duration-200 text-black shadow-lg' onClick={handleSubmit}>Request Sponsors</button>
       </div>
 
-        <CampaignRequest open={open} onClose={() => { setOpen(false) }} campaign={campaign} />
+        <CampaignRequest open={open} onClose={() => { setOpen(false) }} setOpen = {setOpen} campaign={campaign} />
       {/* <AdRequestFormModal open={open} onClose={() => { setOpen(false) }} setOpen={setOpen} influencers={influencers} campaignId={campaignId} selectedInfluencer={location.state.selectedInfluencer} /> */}
     </div>
   );

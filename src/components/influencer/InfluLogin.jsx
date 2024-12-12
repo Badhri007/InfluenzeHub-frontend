@@ -75,9 +75,9 @@ const InfluLogin = () => {
                             <p className="font-bold text-xl lg:text-2xl">INFLUENCER LOGIN</p>
                             <br />
                             <label>Email</label>
-                            <input type="email" name="email" value={loginData.email} className="rounded-lg shadow-lg w-1/3 h-8" onChange={handleChanges} />
+                            <input type="email" name="email" value={loginData.email} className="p-2 rounded-lg shadow-lg w-1/3 h-8" onChange={handleChanges} />
                             <label>Password</label>
-                            <input type="password" name="password" value={loginData.password} className="rounded-lg shadow-lg w-1/3 h-8" onChange={handleChanges} />
+                            <input type="password" name="password" value={loginData.password} className="p-2 rounded-lg shadow-lg w-1/3 h-8" onChange={handleChanges} />
                             <br />
                             <button type="submit" className="bg-blue-500 rounded-xl p-2 mt-2 text-white">Login</button>
                             <br />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SponsoNavbar from '../sponsor/SponsoNavbar';
+import InfluNavbar from '../influencer/InfluNavbar'
 import maleIcon from '../../assets/male.jpg';
 import femaleIcon from '../../assets/female.jpg';
 import twitterIcon from '../../assets/twitter.png';
@@ -21,18 +22,18 @@ function SampleNextArrow(props) {
       className={className}
       style={{
         ...style,
-        display: "flex", 
+        display: "flex",
         justifyContent: "center",
         alignItems: "center",
         background: "gray",
         borderRadius: "50%",
-        width: "3rem", 
+        width: "3rem",
         height: "3rem",
         zIndex: 10,
         opacity: "0.7",
         position: "absolute",
-        top: "50%", 
-       
+        top: "50%",
+
       }}
       onClick={onClick}
     >
@@ -47,18 +48,18 @@ function SamplePrevArrow(props) {
       className={className}
       style={{
         ...style,
-        display: "flex", 
+        display: "flex",
         justifyContent: "center",
         alignItems: "center",
         background: "gray",
         borderRadius: "50%",
-        width: "3rem", 
+        width: "3rem",
         height: "3rem",
         zIndex: 10,
         opacity: "0.7",
         position: "absolute",
-        top: "50%", 
-       
+        top: "50%",
+
       }}
       onClick={onClick}
     >
@@ -75,6 +76,8 @@ const InfluencerProfilePage = () => {
   const [influencerProfile, setInfluencerProfile] = useState({});
   const [advertisement, setAdvertisement] = useState([]);
   const influencer_id = document.URL.split('/')[4];
+
+  let local_influ = localStorage.getItem('influencerId')
 
   const fetchInfluencer = async () => {
     const url = `http://localhost:5000/getInfluencer/`;
@@ -134,7 +137,7 @@ const InfluencerProfilePage = () => {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 2, 
+    slidesToShow: 2,
     slidesToScroll: 1,
     // autoplay: true,
     // autoplaySpeed: 3000,
@@ -148,7 +151,7 @@ const averagePayment = advertisement.length > 0 ? (totalPayment / advertisement.
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <SponsoNavbar />
+      { !local_influ && <SponsoNavbar /> || <InfluNavbar/>}
       <div className="w-[95%] m-auto mt-5">
         {/* Influencer Profile Section */}
         <button className='p-2 rounded-2xl bg-yellow-600 text-white hover:bg-yellow-700 flex flex-row gap-1' onClick={goBack}>
@@ -214,7 +217,7 @@ const averagePayment = advertisement.length > 0 ? (totalPayment / advertisement.
           <p className="text-center text-xl font-semibold mb-2">
             {influencerProfile.username}'s Public Ads
           </p>
-          
+
           {advertisement.length >= 3 ? (
             // Render Slider if there are 3 or more ads
             <Slider {...settings}>

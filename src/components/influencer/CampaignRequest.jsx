@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const CampaignRequest = ({ open, onClose, setOpen, campaign }) => {
 
+  const [sponsorId,setSponsorId]=useState();
   const [campaignSponsor,setCampaignSponsor] = useState();
 
   const [formData, setFormData] = useState({
@@ -14,28 +15,32 @@ const CampaignRequest = ({ open, onClose, setOpen, campaign }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const campaignId = campaign._id;
+  const influencerid= localStorage.getItem("influencerId");
+  // console.log("Influencer Id:", influencerid);
+
+
 
   const getSponsor = async()=>{
     const url = 'http://localhost:5000/getSponsorById';
+  
     try {
     const response = await fetch(url, {
         headers: {
         'Content-Type': 'application/json',
-        'sponsorId':campaign.sponsorId
+        'sponsorid':campaign.sponsorId
         },
     });
 
     if(response.ok)
     {
         const data = await response.json();
-        console.log('Saved Ad Request:', data);
+        console.log('Sponsor name:', data);
         setCampaignSponsor(data);
         setOpen(false);
     }
    
     else {
-        console.error('Error fetching campaigns:', response.status, response.statusText);
+        console.error('Error:', response.status, response.statusText);
       }
 
     } catch (err) {
@@ -44,19 +49,12 @@ const CampaignRequest = ({ open, onClose, setOpen, campaign }) => {
 
 }
 
-  console.log("Sp id:", campaign.sponsorId);
-  useEffect(() => {
+useEffect(()=>{
+  setSponsorId(campaign.sponsorId);
+  getSponsor();
+},[])
 
-    getSponsor();
 
-//     if (location.state && location.state.campaignSponsor) {
-//       setFormData((prevData) => ({
-//         ...prevData,
-//         campaignSponsor: location.state.campaignSponsor,
-//       }));
-//     }
-
-  }, [location.state]);
 
   const handleChanges = (e) => {
     const { name, value } = e.target;
@@ -69,10 +67,17 @@ const CampaignRequest = ({ open, onClose, setOpen, campaign }) => {
   const storeAdRequestForInfluencer = async (e) => {
     e.preventDefault();
     const requestData = {
-      ...formData,
+      adname:formData.adname,
+      message:formData.message,
+      campaignSponsor : campaignSponsor,
+      payment_amount: formData.payment_amount,
       status: 'pending',
       campaignId: campaign._id,
+      influencerid: influencerid
     };
+
+
+    console.log("Ad data:",requestData);
 
     const url = 'http://localhost:5000/adRequestSaveFromInfluencer';
     try {
@@ -86,10 +91,12 @@ const CampaignRequest = ({ open, onClose, setOpen, campaign }) => {
 
       const data = await response.json();
       console.log('Saved Ad Request:', data);
+      alert("Hurray!! Ad Request send successfully!!")
       setOpen(false);
 
     } catch (err) {
       console.log('Error in storing ad request:', err);
+      alert("Oops!!! Error in sending ad request!!")
     }
   };
 
@@ -115,13 +122,13 @@ const CampaignRequest = ({ open, onClose, setOpen, campaign }) => {
               name="campaignSponsor"
               value={formData.campaignSponsor}
               onChange={handleChanges}
-              className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-amber-400 mt-2"
+              className="border border-gray-300 rounded-lg p-2 mb-4 focus:outline-none focus:border-amber-400 mt-2"
               placeholder="Selected Influencer"
             >
-              {formData.campaignSponsor}
+              {campaignSponsor}
             
               </button>
-              <label className='rounded-lg text-center p-2 text-md underline'> {campaignSponsor} </label>
+              
           </div>
 
         <div className="space-y-4">
@@ -138,13 +145,13 @@ const CampaignRequest = ({ open, onClose, setOpen, campaign }) => {
           </div>
 
           <div className="flex flex-col">
-            <label className="text-sm text-gray-600 mb-1">Requirements</label>
+            <label className="text-sm text-gray-600 mb-1">Message</label>
             <textarea
-              name="requirements"
-              value={formData.requirements}
+              name="message"
+              value={formData.message}
               onChange={handleChanges}
               className="border border-gray-300 rounded-lg p-2 h-24 focus:outline-none focus:border-amber-400"
-              placeholder="Enter ad requirements"
+              placeholder="Enter message/requirements"
             />
           </div>
 

@@ -38,7 +38,7 @@ const InfluencerFindPage = () => {
   };
 
   return (
-    <div className="bg-gray-100 p-2 h-full">
+    <div className="bg-gray-100 h-full">
       <InfluNavbar />
       <br />
       {selectedCampaign ? (
@@ -54,7 +54,7 @@ const InfluencerFindPage = () => {
                 key={campaign._id}
                 className="bg-white shadow-xl rounded-xl p-4 m-1 flex flex-col hover:scale-110 transition-all duration-300"
               >
-                <div className="flex flex-row">
+                <div className="flex flex-row justify-between">
                   <div>
                     <p className="font-roboto font-semibold text-xl">{campaign.name}</p>
                     <p className="text-medium font-normal">{campaign.niche}</p>
@@ -62,11 +62,18 @@ const InfluencerFindPage = () => {
                   <img src={campaign.imageUrl} alt={campaign.name} className="w-20 h-20 rounded-lg" />
                 </div>
                 <hr className="h-px my-4 bg-gray-300 border-0" />
-                <div className="grid grid-cols-2 gap-y-4">
-                  <p>Start Date: {campaign.startDate.slice(0, 10)}</p>
-                  <p>End Date: {campaign.endDate.slice(0, 10)}</p>
+                <div className="grid grid-cols-1 gap-y-4">
+                  <div className='flex flex-row justify-between mr-6'>
+                      <div>
+                          <p>From: {campaign.startDate.slice(0, 10)}</p>
+                          <p>To: {campaign.endDate.slice(0, 10)}</p>
+                      </div>
+                      <div>
+                      <p>${campaign.budget}</p>
+                      </div>
+                  </div>
                   <button
-                    className="p-2 border border-blue-500 hover:bg-blue-700 text-blue-500 rounded-lg"
+                    className="p-2 border border-blue-500 hover:bg-blue-700 hover:text-white text-blue-500 rounded-lg"
                     onClick={() => viewCampaign(campaign)}
                   >
                     View
