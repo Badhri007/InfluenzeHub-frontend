@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import dollarIcon from '../../assets/money.png'
 
 const SponsoHomePage = () => {
   const sponsorId = localStorage.getItem('sponsorId');
   const [sponsorName, setSponsorName] = useState('Loading...');
   const [allCampaigns, setAllCampaigns] = useState([]);
   const [allAdsList, setAllAdsList] = useState([]);
+  const [pendingAds, setPendingAds] = useState([]);
+  const [acceptAds, setAcceptAds] = useState([]);
+  const [rejectedAds, setRejectedAds] = useState([]);
+  const [totalAmountSpent, setTotalAmountSpent] = useState(0);
+  const [totalBudget, setTotalBudget] = useState(0);
+  const [currentCampaignBudget, setCurrentCampaignBudget] = useState(0);
+  const [profitableCampaigns, setProfitableCampaigns] = useState([]);
+  const [failedCampaigns, setFailedCampaigns] = useState([]);
+  const [mostProfitableCampaign, setMostProfitableCampaign] = useState(null);
+  const [mostProfit,setMostProfit] = useState(0);
 
-  const [pendingAds,setPendingAds] = useState([]);
-  const [acceptAds,setAcceptAds] = useState([]);
-  const [rejectedAds,setRejectedAds] = useState([]);
+  const [mostLossCampaign, setMostLossCampaign] = useState(null);
+  const [mostLoss,setMostLoss] = useState(0);
 
-  const [totalAmountSpent,setTotalAmountSpent] = useState(0);
-  const [totalBudget,setTotalBudget] = useState(0);
-
-  const [currentCampaignBudget,setCurrentCampaignBudget] = useState(0);
-
-  const [profitableCampaigns,setProfitableCampaigns] = useState([]);
-  const [failedCampaigns,setFailedCampaigns] = useState([]);
-
+  const navigate = useNavigate();
   const [error, setError] = useState(null);
 
   const headers = {
@@ -28,7 +32,6 @@ const SponsoHomePage = () => {
   const getSponsor = async () => {
     try {
       const response = await fetch('http://localhost:5000/getSponsorById', { headers });
-
       if (response.ok) {
         const sponsor = await response.json();
         setSponsorName(sponsor || 'Unknown Sponsor');
@@ -44,23 +47,12 @@ const SponsoHomePage = () => {
   const getAllCampaignsOfSponsor = async () => {
     try {
       const response = await fetch('http://localhost:5000/getAllCampaignsSponsorWise', { headers });
-
       if (response.ok) {
         const campaigns = await response.json();
         setAllCampaigns(campaigns);
 
-        let totalBudget = 0;
-
-        campaigns.map((campaign)=>{
-          totalBudget+=campaign.budget;
-          setCurrentCampaignBudget(campaign.budget);
-        })
-
-        console.log("Total Budget:",totalBudget);
-
+        const totalBudget = campaigns.reduce((acc, campaign) => acc + campaign.budget, 0);
         setTotalBudget(totalBudget);
-
-
       } else {
         setError('Failed to fetch campaigns.');
       }
@@ -76,20 +68,73 @@ const SponsoHomePage = () => {
         headers: { 'Content-Type': 'application/json', campaign_id: campaignId },
       });
 
+      const campaignResponse = await fetch('http://localhost:5000/getParticularCampaign', {
+        headers: { 'Content-Type': 'application/json', campaignid: campaignId },
+      });
+
+      // console.log(campaignId);
+
       if (response.ok) {
         const ads = await response.json();
+        if(campaignResponse.ok)
+        {
+          const campaignData = await campaignResponse.json();
 
-        // let adsCostForCurrentCampaign = 0;
-        // ads.map((ad,index)=>{
-        //   adsCostForCurrentCampaign+=ad.payment_amount;
-        // });
+          console.log(campaignData);
 
-        // if(adsCostForCurrentCampaign<currentCampaignBudget)
-        // {
-        //     setProfitableCampaigns()
-        // }
+          setCurrentCampaignBudget(campaignData[0].budget);
+          let adsCostForCurrentCampaign = 0;
+
+          ads.forEach((ad) => {
+            adsCostForCurrentCampaign += ad.payment_amount;
+          });
+
+          const profit = campaignData[0].budget - adsCostForCurrentCampaign;
+
+          // Update most profitable campaign
+          if (profit > 0) {
+            setProfitableCampaigns((prevCampaigns) => {
+              const isAlreadyAdded = prevCampaigns.some((campaign) => campaign._id === campaignData._id);
+              if (!isAlreadyAdded) {
+                return [...prevCampaigns, campaignData];
+              }
+              return prevCampaigns;
+            });
+
+            setMostProfitableCampaign((prevMostProfitable) => {
+              if (!prevMostProfitable || profit > (prevMostProfitable.profit || 0)) {
+                setMostProfit(profit);
+                return { ...campaignData, profit };
+              }
+              return prevMostProfitable;
+            });
+          }
+
+          else{
+
+            setFailedCampaigns((prevCampaigns) => {
+              const isAlreadyAdded = prevCampaigns.some((campaign) => campaign._id === campaignData._id);
+              if (!isAlreadyAdded) {
+                return [...prevCampaigns, campaignData];
+              }
+              return prevCampaigns;
+            });
 
 
+            let loss = profit;
+            console.log("Loss:",loss);
+            setMostLossCampaign((prevMostLossable) => {
+              if (!prevMostLossable || loss > (prevMostLossable.loss || 0)) {
+                setMostLoss(loss);
+                return { ...campaignData, loss };
+              }
+              return prevMostLossable;
+            });
+          }
+        }
+
+
+        // Update ads list
         setAllAdsList((prevAdsList) => {
           const combinedAds = [...prevAdsList, ...ads];
           const uniqueAds = Array.from(new Set(combinedAds.map((ad) => JSON.stringify(ad)))).map(
@@ -97,53 +142,46 @@ const SponsoHomePage = () => {
           );
           return uniqueAds;
         });
-
-
       } else {
-        console.error('Failed to fetch ads for campaign', campaignId);
+        console.error('Failed to fetch ads or campaign data for campaign:', campaignId);
       }
     } catch (error) {
-      console.error('Error fetching ads for campaign', campaignId, error);
+      console.error('Error fetching ads for campaign:', campaignId, error);
     }
   };
+
+
+
+
+
 
   const fetchAllAds = async () => {
     try {
       await Promise.all(allCampaigns.map((campaign) => getAdsForCurrentCampaign(campaign._id)));
-      filterOldUpcomingAds(allAdsList);
+      // console.log("Profit:",profitableCampaigns);
     } catch (error) {
       console.error('Error fetching all ads:', error);
     }
   };
 
+  const filterAds = () => {
+    const pending = allAdsList.filter((ad) => ad.status === 'pending');
+    const accepted = allAdsList.filter((ad) => ad.status === 'accept');
+    const rejected = allAdsList.filter((ad) => ad.status === 'reject');
 
-  const filterOldUpcomingAds=(allAdsList)=>{
-
-    // console.log(allAdsList);
-
-    let pending = allAdsList.filter(ad => ad.status ==="pending")
-    // console.log("Pending ads count:",pending.length);
     setPendingAds(pending);
-
-    let accepted = allAdsList.filter(ad => ad.status ==="accept")
-    console.log("Accepted ads count:",accepted);
     setAcceptAds(accepted);
-
-    let rejected = allAdsList.filter(ad => ad.status === "reject")
-    // console.log("Rejected Ad count:",rejected);
     setRejectedAds(rejected);
 
-    let totalAmountSpent = 0;
-
-    acceptAds.map((ad)=>{
-      totalAmountSpent+=ad.payment_amount;
-    })
-
-    console.log("Total Amount Spent:",totalAmountSpent);
-    setTotalAmountSpent(totalAmountSpent);
-  }
+    const totalSpent = accepted.reduce((acc, ad) => acc + ad.payment_amount, 0);
+    setTotalAmountSpent(totalSpent);
 
 
+  };
+
+  const handleCampaignNavigation = (campaign_id) => {
+    navigate(`/campaign/${campaign_id}`);
+  };
 
   useEffect(() => {
     (async () => {
@@ -155,92 +193,101 @@ const SponsoHomePage = () => {
   useEffect(() => {
     if (allCampaigns.length > 0) {
       fetchAllAds();
-      // console.log(allAdsList);
-
     }
   }, [allCampaigns]);
+
+  useEffect(() => {
+    if (allAdsList.length > 0) {
+      filterAds();
+    }
+  }, [allAdsList]);
 
   return (
     <div className='bg-gray-200 w-full h-full'>
       <div className='p-4 w-full h-full'>
         <div className='p-4'>
-        <h1 className='text-3xl ml-5'>Welcome, {sponsorName}!</h1>
+          <h1 className='text-3xl ml-5'>Welcome, {sponsorName}!</h1>
         </div>
 
-        <div className='sm:grid grid-cols-1 sm:w-full md:grid-cols-3  lg:flex flex-row w-full h-[25%] justify-around'>
-          <div className='sm:w-full md:w-[90%] lg:w-[15%]   bg-white  rounded-xl p-4 m-2'>
-            <p className='p-1 text-center bg-cyan-300 rounded-xl'>Total Campaigns</p>
-            <p className='text-9xl text-center'>{allCampaigns.length}</p>
-          </div>
-
-          <div className='bg-white sm:w-full md:w-[90%] lg:w-[15%]  rounded-xl p-4 m-2'>
-            <p className='p-1 text-center bg-violet-300 rounded-xl'>Total Advertisements</p>
-            <p className='text-9xl text-center'>{allAdsList.length}</p>
-          </div>
-
-          <div className='bg-white sm:w-full md:w-[90%] lg:w-[15%]  rounded-xl p-4 m-2'>
-            <p className='bg-green-400 p-1 text-center rounded-xl'>Total Accepted Ads</p>
-            <p className='text-9xl text-center'>{acceptAds.length}</p>
-          </div>
-
-          <div className='bg-white sm:w-full md:w-[90%] lg:w-[15%]  rounded-xl p-4 m-2'>
-            <p className='bg-red-300 p-1 text-center rounded-xl'>Total Rejected Ads</p>
-            <p className='text-9xl text-center'>{rejectedAds.length}</p>
-          </div>
-
-          <div className='bg-white sm:w-full md:w-[90%] lg:w-[15%]  rounded-xl p-4 m-2'>
-            <p className='bg-yellow-300 p-1 text-center rounded-xl'>Total Pending Ads</p>
-            <p className='text-9xl text-center'>{pendingAds.length}</p>
-          </div>
+        <div className='sm:grid grid-cols-1 sm:w-full md:grid-cols-3 lg:flex flex-row w-full h-[25%] justify-around'>
+          <StatCard title="Total Campaigns" value={allCampaigns.length} color="bg-cyan-300" />
+          <StatCard title="Total Advertisements" value={allAdsList.length} color="bg-violet-300" />
+          <StatCard title="Total Accepted Ads" value={acceptAds.length} color="bg-green-400" />
+          <StatCard title="Total Rejected Ads" value={rejectedAds.length} color="bg-red-300" />
+          <StatCard title="Total Pending Ads" value={pendingAds.length} color="bg-yellow-300" />
         </div>
 
+        <div className='flex flex-row justify-between p-[8%]'>
+          <div>
+            <BudgetSummary label="TOTAL BUDGET" value={totalBudget} />
+            <BudgetSummary label="EXPENSES" value={totalAmountSpent} />
+            <BudgetSummary label="BALANCE" value={totalBudget - totalAmountSpent} />
+          </div>
+          <div>
+            <p className='font-bold mb-2'>MOST PROFITABLE CAMPAIGN:</p>
+            {mostProfitableCampaign ? (
+              <CampaignCard
+                campaign={mostProfitableCampaign[0]}
+                mostProfit={mostProfit}
+                onClick={() => handleCampaignNavigation(mostProfitableCampaign[0]._id)}
+              />
+            ):
+            (<p className='bg-white rounded-xl p-2'>No Profit Campaign</p>)}
 
-      </div>
+            <br/>
 
-      <div>
-        <div className='flex flex-row justify-between p-[10%]'>
-          <div >
-            <div className='mb-3'>
-              <label className=' p-1 font-bold rounded-xl'>TOTAL BUDGET: </label>
-              <p className='text-3xl p-1.5 bg-white  rounded-xl'>${totalBudget}</p>
-            </div>
+          <p className='font-bold mb-2'>MOST LOSS CAMPAIGN:</p>
+            {mostLossCampaign ?  (
+              <CampaignCard
+                campaign={mostLossCampaign[0]}
+                mostProfit={mostLoss}
+                onClick={() => handleCampaignNavigation(mostLossCampaign[0]._id)}
+              />
+            ):
+            (<p className='bg-white rounded-xl p-2'>No Loss Campaign</p>)}
 
-            <div className='mb-3'>
-              <label className=' p-1 font-bold rounded-xl'>EXPENSES:  </label>
-              <p className='text-3xl p-1.5  bg-white  rounded-xl'>${totalAmountSpent}</p>
-            </div>
-
-            <div className='mb-3'>
-              <label className=' p-1 font-bold rounded-xl'>BALANCE: </label>
-              <p className='text-3xl p-1.5  bg-white  rounded-xl'>${totalBudget - totalAmountSpent}</p>
-            </div>
 
           </div>
           <div>
-            <p>Profitable Campaign:</p>
-            <p>Failed Campaign:</p>
-
+            <a href="#" className='font-bold'>INFLUENCERS HIRED</a>
           </div>
-
-          <div>
-          <a href="#" className='underline'> Influencers Hired </a>
-          </div>
-
-
         </div>
-
       </div>
-      {/* <div>
-        <h2>All Ads</h2>
-        {allAdsList.length === 0 && <p>No ads available.</p>}
-        <ul>
-          {allAdsList.map((ad, index) => (
-            <li key={index}>{JSON.stringify(ad)}</li>
-          ))}
-        </ul>
-      </div> */}
     </div>
   );
 };
+
+const StatCard = ({ title, value, color }) => (
+  <div className={`shadow-md bg-white rounded-xl p-4 m-2 w-[15%]`}>
+    <p className={`p-1 text-center ${color} rounded-xl`}>{title}</p>
+    <p className='text-9xl text-center'>{value}</p>
+  </div>
+);
+
+const BudgetSummary = ({ label, value }) => (
+  <div className='mb-3'>
+    <label className='p-1 font-bold rounded-xl'>{label}: </label>
+    <p className='text-3xl mt-2 p-1.5 bg-white rounded-xl shadow-md'>${value}</p>
+  </div>
+);
+
+const CampaignCard = ({ campaign, mostProfit, onClick }) => (
+
+    <div className="flex flex-row gap-3 bg-white rounded-xl p-6 shadow-md" onClick={onClick}>
+      <img
+        src={campaign.imageUrl}
+        alt=""
+        className="rounded-[50%] bg-white border-black border-2 w-20 h-20 p-1.5"
+      />
+      <div>
+        <p className="mt-4">{campaign.name}</p>
+        <div className="flex flex-row">
+          <img src={dollarIcon} alt="" className="w-8 h-8" />
+          <p className="mt-1 ml-1">${mostProfit}</p>
+        </div>
+      </div>
+    </div>
+);
+
 
 export default SponsoHomePage;

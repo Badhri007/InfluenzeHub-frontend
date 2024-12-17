@@ -13,6 +13,8 @@ const SingleCampaign = () => {
   const navigate = useNavigate();
   const [influencers, setInfluencers] = useState([]);
 
+
+
   console.log("ID:", campaignId);
 
   const viewCampaign = async () => {
@@ -47,6 +49,9 @@ const SingleCampaign = () => {
   useEffect(() => {
     if (location.state && location.state.selectedInfluencer) {
       setOpen(true);
+    }
+    else{
+      setOpen(false);
     }
   }, [location.state]);
 
@@ -142,7 +147,7 @@ const SingleCampaign = () => {
         <button className='bg-amber-300 rounded-xl p-2 hover:scale-110 transition-all duration-200 text-black shadow-lg' onClick={handleSubmit}>Request Influencers</button>
       </div>
 
-      <AdRequestFormModal open={open} onClose={() => { setOpen(false) }} setOpen={setOpen} influencers={influencers} campaignId={campaignId} selectedInfluencer={location.state.selectedInfluencer} />
+      <AdRequestFormModal open={open} onClose={() => { setOpen(false) }} setOpen={setOpen} influencers={influencers} campaignId={campaignId} selectedInfluencer={location.state?.selectedInfluencer || null} />
     </div>
   );
 }
