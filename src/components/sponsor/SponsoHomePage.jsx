@@ -18,6 +18,8 @@ const SponsoHomePage = () => {
   const [mostProfitableCampaign, setMostProfitableCampaign] = useState(null);
   const [mostProfit,setMostProfit] = useState(0);
 
+  const [budgetFriendlyInfluencer,setBudgetFriendlyInfluencer] = useState([]);
+
   const [mostLossCampaign, setMostLossCampaign] = useState(null);
   const [mostLoss,setMostLoss] = useState(0);
 
@@ -80,7 +82,7 @@ const SponsoHomePage = () => {
         {
           const campaignData = await campaignResponse.json();
 
-          console.log(campaignData);
+          // console.log(campaignData);
 
           setCurrentCampaignBudget(campaignData[0].budget);
           let adsCostForCurrentCampaign = 0;
@@ -122,7 +124,7 @@ const SponsoHomePage = () => {
 
 
             let loss = profit;
-            console.log("Loss:",loss);
+            // console.log("Loss:",loss);
             setMostLossCampaign((prevMostLossable) => {
               if (!prevMostLossable || loss > (prevMostLossable.loss || 0)) {
                 setMostLoss(loss);
@@ -158,7 +160,6 @@ const SponsoHomePage = () => {
   const fetchAllAds = async () => {
     try {
       await Promise.all(allCampaigns.map((campaign) => getAdsForCurrentCampaign(campaign._id)));
-      // console.log("Profit:",profitableCampaigns);
     } catch (error) {
       console.error('Error fetching all ads:', error);
     }
@@ -176,8 +177,84 @@ const SponsoHomePage = () => {
     const totalSpent = accepted.reduce((acc, ad) => acc + ad.payment_amount, 0);
     setTotalAmountSpent(totalSpent);
 
+    console.log("Accepted:",accepted);
 
   };
+
+
+  const getInfluencerId = async(influencer_username) =>{
+    try {
+      console.log("Query name:",influencer_username)
+      const response = await fetch('http://localhost:5000/getInfluencerIdFromUsername', {
+        headers: { 'Content-Type': 'application/json', influencerusername: influencer_username },
+      });
+
+
+      if (response.ok) {
+        const { influencer_id, profile_photo_url, platform } = await response.json();
+        return { influencer_id, profile_photo_url, platform };
+      }
+    }
+    catch(err)
+    {
+      console.log("Error in getting influencer id by username:", err)
+    }
+  }
+
+  const getBestInfluencerFromAllCampaigns = async() => {
+    console.log("All Ads List:", allAdsList);
+
+    if (allAdsList.length === 0) {
+      console.log("No ads available to calculate the best influencer.");
+      return null; // Handle the case where no ads exist
+    }
+
+    const result = allAdsList.reduce((accumulator, ad) => {
+      const username = ad.influencer_username;
+      if (!accumulator[username]) {
+        accumulator[username] = { username, totalAmount: 0, frequency: 0, average: 0.0 };
+      }
+
+      accumulator[username].totalAmount += ad.payment_amount;
+      accumulator[username].frequency += 1;
+      accumulator[username].average =
+        accumulator[username].totalAmount / accumulator[username].frequency;
+
+      return accumulator;
+    }, {});
+
+    const influencersWithPaymentStats = Object.values(result);
+
+    console.log("Influencers Payment Stats:", influencersWithPaymentStats);
+
+    if (influencersWithPaymentStats.length === 0) {
+      console.log("No influencer stats available.");
+      return null; // Handle case where no influencers have payment stats
+    }
+
+    const bestInfluencer = influencersWithPaymentStats.reduce((min, influencer) => {
+      return influencer.average < min.average ? influencer : min;
+    });
+
+    console.log("Best Influencer:", bestInfluencer);
+
+    const influencerDetails = await getInfluencerId(bestInfluencer.username);
+
+    if (influencerDetails) {
+      bestInfluencer.influencer_id = influencerDetails.influencer_id;
+      bestInfluencer.profile_photo_url = influencerDetails.profile_photo_url;
+      bestInfluencer.platform = influencerDetails.platform;
+      console.log("Best Influencer with Details:", bestInfluencer);
+
+      setBudgetFriendlyInfluencer(bestInfluencer);
+
+    } else {
+      console.error("Failed to fetch additional details for the best influencer.");
+    }
+
+    return bestInfluencer;
+  };
+
 
   const handleCampaignNavigation = (campaign_id) => {
     navigate(`/campaign/${campaign_id}`);
@@ -195,6 +272,10 @@ const SponsoHomePage = () => {
       fetchAllAds();
     }
   }, [allCampaigns]);
+
+  useEffect(()=>{
+    getBestInfluencerFromAllCampaigns();
+  },[allAdsList])
 
   useEffect(() => {
     if (allAdsList.length > 0) {
@@ -249,7 +330,37 @@ const SponsoHomePage = () => {
 
           </div>
           <div>
-            <a href="#" className='font-bold'>INFLUENCERS HIRED</a>
+            <a href="#" className='font-bold'>BEST PROFITABLE FREQUENT INFLUENCER</a>
+
+            <div className='bg-white rounded-xl p-2'>
+              {/* <div className='flex flex-col'>
+
+              </div> */}
+              <div>
+                <div className='flex flex-row justify-center items-center'>
+                    <img src={budgetFriendlyInfluencer.profile_photo_url} alt="" className='w-20 h-20' />
+                    <p className='mt-5 ml-10'>{budgetFriendlyInfluencer.username}</p>
+                </div>
+
+
+                <div className='flex flex-row justify-center items-center'>
+
+                <label>Platform : </label>
+                <p className=''>  {budgetFriendlyInfluencer.platform}</p>
+                </div>
+                <div className='flex flex-row justify-center items-center'>
+                <label>Average Pay : $   </label>
+                <p> {budgetFriendlyInfluencer.average}/Ad</p>
+                </div>
+                <div className='flex flex-row justify-center items-center'>
+                <label> Frequency :   </label>
+                <p> {budgetFriendlyInfluencer.frequency}</p>
+                </div>
+
+
+
+              </div>
+            </div>
           </div>
         </div>
       </div>
