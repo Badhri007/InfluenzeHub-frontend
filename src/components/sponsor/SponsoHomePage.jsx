@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import dollarIcon from '../../assets/money.png'
+import coinIcon from '../../assets/dollar.png'
 
 const SponsoHomePage = () => {
   const sponsorId = localStorage.getItem('sponsorId');
@@ -260,6 +261,10 @@ const SponsoHomePage = () => {
     navigate(`/campaign/${campaign_id}`);
   };
 
+  const handleInfluencerNavigation = (influencer_id) => {
+    navigate(`/influencer/${influencer_id}`);
+  };
+
   useEffect(() => {
     (async () => {
       await getSponsor();
@@ -305,7 +310,7 @@ const SponsoHomePage = () => {
             <BudgetSummary label="BALANCE" value={totalBudget - totalAmountSpent} />
           </div>
           <div>
-            <p className='font-bold mb-2'>MOST PROFITABLE CAMPAIGN:</p>
+            <p className='font-bold mb-2 text-lg'>MOST PROFITABLE CAMPAIGN:</p>
             {mostProfitableCampaign ? (
               <CampaignCard
                 campaign={mostProfitableCampaign[0]}
@@ -317,7 +322,7 @@ const SponsoHomePage = () => {
 
             <br/>
 
-          <p className='font-bold mb-2'>MOST LOSS CAMPAIGN:</p>
+          <p className='font-bold mb-2 text-lg'>MOST LOSS CAMPAIGN:</p>
             {mostLossCampaign ?  (
               <CampaignCard
                 campaign={mostLossCampaign[0]}
@@ -325,36 +330,38 @@ const SponsoHomePage = () => {
                 onClick={() => handleCampaignNavigation(mostLossCampaign[0]._id)}
               />
             ):
-            (<p className='bg-white rounded-xl p-2'>No Loss Campaign</p>)}
+            (<p className='bg-white rounded-xl p-2 hover:bg-red-400'>No Loss Campaign</p>)}
 
 
           </div>
           <div>
-            <a href="#" className='font-bold'>BEST PROFITABLE FREQUENT INFLUENCER</a>
+            <p className='font-bold text-lg mb-2'>BEST PROFITABLE FREQUENT INFLUENCER</p>
 
-            <div className='bg-white rounded-xl p-2'>
-              {/* <div className='flex flex-col'>
-
-              </div> */}
+            <div className='bg-white rounded-xl p-2 hover:bg-black hover:text-white' onClick={()=>{handleInfluencerNavigation(budgetFriendlyInfluencer.influencer_id)}}>
               <div>
-                <div className='flex flex-row justify-center items-center'>
+                <div className='flex flex-row justify-center items-center mt-2'>
                     <img src={budgetFriendlyInfluencer.profile_photo_url} alt="" className='w-20 h-20' />
-                    <p className='mt-5 ml-10'>{budgetFriendlyInfluencer.username}</p>
+                    <div>
+                      <p className='mt-5 ml-10 text-xl'>{budgetFriendlyInfluencer.username}</p>
+                      <p className='ml-11 mt-1 text-red-500'>  {budgetFriendlyInfluencer.platform}</p>
+                    </div>
+
                 </div>
 
-
+                <br/>
                 <div className='flex flex-row justify-center items-center'>
 
-                <label>Platform : </label>
-                <p className=''>  {budgetFriendlyInfluencer.platform}</p>
+                <label></label>
+
                 </div>
                 <div className='flex flex-row justify-center items-center'>
-                <label>Average Pay : $   </label>
-                <p> {budgetFriendlyInfluencer.average}/Ad</p>
+                <label>Average Pay : </label>
+                <img src={coinIcon} alt="" className='w-8 h-8 ml-2 mr-1'/>
+                <p className='text-green-600  hover:text-white'> {budgetFriendlyInfluencer.average}/Ad</p>
                 </div>
-                <div className='flex flex-row justify-center items-center'>
-                <label> Frequency :   </label>
-                <p> {budgetFriendlyInfluencer.frequency}</p>
+                <div className='flex flex-row  mb-4'>
+                    <label className='ml-20'> Frequency :   </label>
+                    <p className='ml-10'> {budgetFriendlyInfluencer.frequency}</p>
                 </div>
 
 
@@ -384,7 +391,7 @@ const BudgetSummary = ({ label, value }) => (
 
 const CampaignCard = ({ campaign, mostProfit, onClick }) => (
 
-    <div className="flex flex-row gap-3 bg-white rounded-xl p-6 shadow-md" onClick={onClick}>
+    <div className="flex flex-row gap-3 bg-white rounded-xl p-6 shadow-md cursor-pointer hover:bg-green-500" onClick={onClick}>
       <img
         src={campaign.imageUrl}
         alt=""
