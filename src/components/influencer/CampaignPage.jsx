@@ -103,7 +103,7 @@ const CampaignPage = ({campaign,onBack}) => {
       <div className="flex flex-col md:flex-row">
         <div className='flex-shrink-0 flex-grow-0 md:w-[50%]'>
           <img src={currentCampaign[0].imageUrl}
-            className='w-full h-auto rounded-xl p-2'
+            className='w-[50%] h-auto rounded-xl p-2'
             style={{ objectFit: 'cover' }}
           />
         </div>

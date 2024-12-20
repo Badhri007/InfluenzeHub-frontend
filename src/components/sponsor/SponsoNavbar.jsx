@@ -48,7 +48,7 @@ const SponsoNavbar = () => {
         <div className={`lg:flex ${isOpen ? 'block' : 'hidden'} w-full lg:w-auto`}>
           <ul className="flex flex-col lg:flex-row lg:space-x-4 mt-2 lg:mt-0">
             <li><a href="/" className="text-white block px-2 py-1  cursor-pointer hover:underline">Home</a></li>
-            <li><a href="/" className="text-white block px-2 py-1  cursor-pointer hover:underline">Profile</a></li>
+            <li><a href="/requestsFromInfluencers" className="text-white block px-2 py-1  cursor-pointer hover:underline">Requests</a></li>
             <li><a href="/sponsorCampaign" className="text-white block px-2 py-1  cursor-pointer hover:underline">Campaign</a></li>
             <li><a href="/find" className="text-white block px-2 py-1  cursor-pointer hover:underline">Find</a></li>
             <li><a onClick={logout} className="text-white block px-2 py-1 cursor-pointer hover:underline">Logout</a></li>
