@@ -14,6 +14,7 @@ import InfluencerProfilePage from './components/influencer/InfluencerProfilePage
 import InfluencerFindPage from './components/influencer/InfluencerFindPage';
 import CampaignPage from './components/influencer/CampaignPage';
 import RequestsFromInflu from './components/sponsor/RequestsFromInflu';
+import AllInfluAdRequests from './components/influencer/AllInfluAdRequests';
 
 
 const router = createBrowserRouter(createRoutesFromElements
@@ -33,6 +34,7 @@ const router = createBrowserRouter(createRoutesFromElements
       <Route path='/campaign/:id' element={<CampaignPage/>} />
       <Route path='/influencerStats/:id' element={<InfluencerProfilePage/>}/>
       <Route path="/requestsFromInfluencers" element={<RequestsFromInflu/>}/>
+      <Route path = "/allInfluAdRequests/:id" element={<AllInfluAdRequests/>}/>
     </Route>
 
   )

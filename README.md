@@ -5,6 +5,9 @@
 ## Sponsor Campaign Page - Sponsor can add campaign,edit and delete it
 <img width="1711" alt="image" src="https://github.com/user-attachments/assets/bc155fff-9727-4183-bda9-6517a776a175" />
 
+## Sponsor Home Page - Sponsor can view the stats
+<img width="1725" alt="image" src="https://github.com/user-attachments/assets/30601632-7972-41c7-9a5d-452224722916" />
+
 ## Sponsor Single Campaign
 <img width="1716" alt="image" src="https://github.com/user-attachments/assets/16e12ed7-4be2-4f57-ab0f-38185d511a45" />
 

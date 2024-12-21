@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
-import InfluNavbar from '../influencer/InfluNavbar'
+import { useLocation } from 'react-router-dom';
 import inboxIcon from '../../assets/inbox.png';
 import { useNavigate } from 'react-router-dom';
 import CampaignRequest from './CampaignRequest';
@@ -76,26 +75,9 @@ const CampaignPage = ({campaign,onBack}) => {
   }
 
   const handleAdRequests = async (e) => {
-    e.preventDefault();
-    let campaign_id = campaignId;
-    console.log("Campaign id:", campaign_id);
-
-    const url = "http://localhost:5000/getAllAdRequests";
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "Application/JSON",
-          "campaign_id": campaign_id
-        }
-      });
-
-      const data = await response.json();
-      console.log("Ad Requests got:", data);
-      navigate('/AllAdRequests', { state: { campaign_id: campaign_id, CampaignName: currentCampaign[0].name } });
-    } catch (err) {
-      console.log("Error in getting ad requests:", err);
-    }
+      e.preventDefault();
+      console.log("Campaign id from handling:", campaignId);
+      navigate(`/allInfluAdRequests/${campaignId}`);
   }
 
   return (
@@ -103,6 +85,7 @@ const CampaignPage = ({campaign,onBack}) => {
       <div className="flex flex-col md:flex-row">
         <div className='flex-shrink-0 flex-grow-0 md:w-[50%]'>
           <img src={currentCampaign[0].imageUrl}
+            alt=""
             className='w-[50%] h-auto rounded-xl p-2'
             style={{ objectFit: 'cover' }}
           />
@@ -129,7 +112,7 @@ const CampaignPage = ({campaign,onBack}) => {
           </div>
           <div className='flex p-2 gap-2 rounded-xl bg-green-500 flex-row hover:scale-110 hover:border-black transition-all' onClick={handleAdRequests} >
             <button className='text-white text-sm md:font-semibold md:text-lg'>Request Status</button>
-            <img src={inboxIcon} className='w-8 h-8 md:w-10 md:h-10'></img>
+            <img src={inboxIcon} alt="" className='w-8 h-8 md:w-10 md:h-10'></img>
           </div>
         </div>
       </div>
