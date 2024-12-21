@@ -154,7 +154,7 @@ const averagePayment = advertisement.length > 0 ? (totalPayment / advertisement.
       { !local_influ && <SponsoNavbar /> || <InfluNavbar/>}
       <div className="w-[95%] m-auto mt-5">
         {/* Influencer Profile Section */}
-        <button className='p-2 rounded-2xl bg-yellow-600 text-white hover:bg-yellow-700 flex flex-row gap-1' onClick={goBack}>
+        <button className='p-2 rounded-2xl bg-yellow-600 text-white hover:bg-yellow-700 flex flex-row gap-1'  alt="" onClick={goBack}>
           <img src={previousIcon} className='w-10 h-10'></img>
           <p className='mt-2'>Go back</p>
         </button>

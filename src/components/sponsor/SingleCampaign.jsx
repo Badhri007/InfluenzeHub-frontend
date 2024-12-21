@@ -105,6 +105,12 @@ const SingleCampaign = () => {
     }
   }
 
+
+  const getAllInfluencerRequests=()=>{
+    console.log("Campaign id from handling:", campaignId);
+    navigate(`/requestsFromInfluencersForParticularCampaign/${campaignId}`);
+  }
+
   return (
     <div className='bg-white'>
       <SponsoNavbar />
@@ -112,6 +118,7 @@ const SingleCampaign = () => {
       <div className="flex flex-col md:flex-row">
         <div className='flex-shrink-0 flex-grow-0 md:w-[50%]'>
           <img src={currentCampaign[0].imageUrl}
+            alt=""
             className='w-[50%] m-auto h-auto rounded-xl p-2'
             style={{ objectFit: 'cover' }}
           />
@@ -139,6 +146,9 @@ const SingleCampaign = () => {
           <div className='flex p-2 gap-2 rounded-xl bg-black flex-row hover:scale-110 hover:border-black transition-all' onClick={handleAdRequests} >
             <button className='text-white text-sm md:font-semibold md:text-lg'>My Requests</button>
             <img src={inboxIcon} alt="imageIcon" className='w-8 h-8 md:w-10 md:h-10'></img>
+          </div>
+          <div onClick={()=>{getAllInfluencerRequests(campaignId)}}>
+            <button className='p-3 text-white bg-black rounded-2xl'>Influencer Requests</button>
           </div>
         </div>
       </div>
