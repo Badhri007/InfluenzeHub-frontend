@@ -1,7 +1,7 @@
 import React from "react";
 import closeIcon from "../../assets/close.png"
 
-const RequestViewModal = ({ onClose, adDetails , handleStatus }) => {
+const RequestViewModal = ({ onClose, adDetails  ,handleStatus }) => {
 
 
     console.log("AD:",adDetails);
@@ -24,7 +24,7 @@ const RequestViewModal = ({ onClose, adDetails , handleStatus }) => {
                 <label className=" rounded-full p-1.5 font-semibold ">Campaign</label>
                 <p className="bg-gray-100 font-semibold  rounded-full p-1.5 align-middle">{adDetails.campaignName}</p>
             </div>
-            
+
             <br/>
             <div className="flex flex-row gap-5">
                   <label className=" rounded-full align-middle p-1.5 font-semibold ">Requirements</label>
@@ -57,12 +57,11 @@ const RequestViewModal = ({ onClose, adDetails , handleStatus }) => {
             <button className="rounded-xl bg-green-500 p-2 text-white  text-md" value="accept" onClick={(e)=>{handleStatus(e,adDetails.ad_id)}}>Accept</button>
             )}
             </div>
-        
-          
+
+
         </div>
       </div>
     );
   };
-  
+
   export default RequestViewModal;
-  

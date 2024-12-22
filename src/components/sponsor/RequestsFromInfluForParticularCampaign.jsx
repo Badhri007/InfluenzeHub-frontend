@@ -5,6 +5,7 @@ import eyeIcon from '../../assets/eye.png'
 import acceptIcon from '../../assets/accept.png'
 import rejectIcon from '../../assets/cancel.png'
 import previousIcon from '../../assets/previous.png'
+import InfluencerRequestViewModal from './InfluencerRequestViewModal';
 
 const RequestsFromInfluForParticularCampaign = () => {
 
@@ -15,13 +16,26 @@ const RequestsFromInfluForParticularCampaign = () => {
 
 
   const [sponsorName, setSponsorName] = useState('');
+
   const [allAdRequestOfInfluencers, setAllAdRequestOfInfluencers] = useState([]);
+  const [selectedAd,setSelectedAd]=useState();
+
+  const [isModalOpen,setIsModalOpen] = useState(false);
 
   const navigate  = useNavigate();
 
 
   const [campaign,setCampaign] = useState([{
-    'name':''
+    _id:'',
+    name:'',
+    budget:0,
+    description:'',
+    sponsorId:'',
+    visibility:'',
+    niche:'',
+    imageUrl:'',
+    startDate:'',
+    endDate:''
   }]);
 
   const goBack=()=>{
@@ -143,6 +157,81 @@ const RequestsFromInfluForParticularCampaign = () => {
 
 
 
+  const handleAdStatus = async (newStatus,adRequest) => {
+
+
+    let value = newStatus;
+    console.log("New Value:", value);
+
+    let newAd;
+    let ad_id = adRequest._id
+    console.log("Editable Ad:", ad_id);
+
+    const updatedAds = allAdRequestOfInfluencers.map((ad) => {
+      if (ad._id === ad_id) {
+        console.log("id:",ad_id);
+        console.log("press:",value);
+        newAd={ ...ad, status: value };
+        console.log("Upd Ad:", newAd);
+        return newAd;
+      }
+      return ad;
+    });
+
+    setAllAdRequestOfInfluencers(updatedAds);
+
+    console.log("Up:",newAd);
+
+    try {
+      const url = "http://localhost:5000/updateAdRequestFromInfluencer";
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          'Content-Type': 'Application/JSON',
+          // 'influencer_id': influencer_id
+        },
+        body: JSON.stringify(newAd)
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setAllAdRequestOfInfluencers(data); // Update the advertisement state with the new data
+      }
+
+      console.log("Updated status data:", data);
+      getAdRequestsFromInfluencers();
+
+      if(isModalOpen===true)
+      {
+        setIsModalOpen(false);
+      }
+
+    } catch (err) {
+      console.log("Error in updating:", err);
+    }
+  };
+
+
+  const handleAdView=(newStatus,adRequest)=>{
+    if(!isModalOpen)
+    {
+      setIsModalOpen(true);
+    }
+
+    setSelectedAd(adRequest);
+  }
+
+
+  const closeModal=()=>{
+    setIsModalOpen(false);
+
+  }
+
+
+
+
+
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-300">
     <SponsoNavbar />
@@ -165,8 +254,8 @@ const RequestsFromInfluForParticularCampaign = () => {
             </tr>
           </thead>
           <tbody>
-            {allAdRequestOfInfluencers?.map((adRequest, index) => (
-
+            {Array.isArray(allAdRequestOfInfluencers) && allAdRequestOfInfluencers?.map((adRequest, index) => (
+              adRequest.name && (adRequest.status==="pending")&& (
               <tr key={index} className="odd:bg-white even:bg-gray-100">
                 <td className="px-4 py-3 text-lg text-blue-500 underline cursor-pointer hover:bg-blue-600 hover:text-white" onClick={()=>{navigateToInfluencerProfile(adRequest.requested_influencer)}}>{adRequest.requested_influencer}</td>
                 <td className="px-4 py-3">{adRequest.name}</td>
@@ -174,20 +263,65 @@ const RequestsFromInfluForParticularCampaign = () => {
                 <td className="px-4 py-3">{adRequest.payment_amount}</td>
                 <td>
                   <div className='flex flex-row justify-evenly'>
-                      <img src={eyeIcon} alt="" className='w-10 h-10'/>
-                      <img src={acceptIcon} alt="" className='w-8 h-8'/>
-                      <img src={rejectIcon} alt="" className='w-8 h-8'/>
+                      <img src={eyeIcon} onClick={()=>{handleAdView("view",adRequest)}} alt="" className='w-10 h-10 cursor-pointer'/>
+                      <img src={acceptIcon} onClick = {()=>{handleAdStatus("accept",adRequest)}} alt="" className='w-8 h-8 cursor-pointer'/>
+                      <img src={rejectIcon} onClick = {()=>{handleAdStatus("reject",adRequest)}} alt="" className='w-8 h-8 cursor-pointer'/>
                   </div>
 
                 </td>
-                {/* <td className="px-6 py-3">{adRequest.status}</td> */}
               </tr>
-            ))}
+            )))}
           </tbody>
         </table>
       </div>
     </div>
+    <br/>
+    <br/>
+
+
+
+    <div className="flex-grow relative overflow-auto">
+      <div className="w-[95%] m-auto shadow-lg rounded-xl overflow-auto">
+        <table className="w-full text-sm text-left rtl:text-right text-black-500">
+          <thead className="bg-gray-100">
+            <tr>
+              <th scope="col" className="px-4 py-3 text-lg">INFLUENCER</th>
+              <th scope="col" className="px-4 py-3 text-lg">AD</th>
+              <th scope="col" className="px-4 py-3 text-lg">MESSAGE</th>
+              <th scope="col" className="px-4 py-3 text-lg">PAY</th>
+              <th scope="col" className="px-4 py-3 text-lg">STATUS</th>
+            </tr>
+          </thead>
+          <tbody>
+          {Array.isArray(allAdRequestOfInfluencers) && allAdRequestOfInfluencers?.map((adRequest, index) => (
+              adRequest.name && (adRequest.status==="accept" || adRequest.status==="view")&& (
+              <tr key={index} className="odd:bg-white even:bg-gray-100">
+                <td className="px-4 py-3 text-lg text-blue-500 underline cursor-pointer hover:bg-blue-600 hover:text-white" onClick={()=>{navigateToInfluencerProfile(adRequest.requested_influencer)}}>{adRequest.requested_influencer}</td>
+                <td className="px-4 py-3">{adRequest.name}</td>
+                <td className="px-4 py-3">{adRequest.message}</td>
+                <td className="px-4 py-3">{adRequest.payment_amount}</td>
+                <td>
+                  <div className='flex flex-row justify-evenly'>
+                      <img src={eyeIcon} alt="" onClick={()=>{handleAdView("view",adRequest)}} className='w-10 h-10 cursor-pointer'/>
+                  </div>
+
+                </td>
+              </tr>
+            )))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+
+
+    {isModalOpen && (
+        <InfluencerRequestViewModal onClose={closeModal} adDetails={selectedAd} handleStatus={handleAdStatus} campaign={campaign}/> // Pass a close function as a prop
+    )}
+
   </div>
+
   );
 };
 
