@@ -11,6 +11,9 @@
 ## Sponsor Single Campaign
 <img width="1716" alt="image" src="https://github.com/user-attachments/assets/16e12ed7-4be2-4f57-ab0f-38185d511a45" />
 
+## Sponsors can view the requests from Influencers for particular campaign
+<img width="1727" alt="image" src="https://github.com/user-attachments/assets/e67bc3af-3846-419e-b2c2-08cd0b444a09" />
+ 
 ## Sponsor of the particular product can request any of the influencers
 <img width="1348" alt="image" src="https://github.com/user-attachments/assets/ed740017-ba9e-4af5-a575-5d107f6902b8" />
 
